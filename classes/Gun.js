@@ -1,4 +1,6 @@
 
+Gun.blobImage = loader.loadImage("img/blob.png");
+
 var GUN_YELLOW = new GunType("Yellow", "yellow");
 var GUN_GREEN = new GunType("Green", "green");
 var GUN_BLUE = new GunType("Blue", "blue");
@@ -7,6 +9,17 @@ var GUN_RED = new GunType("Red", "red");
 function GunType(name, color) {
     this.name = name;
     this.color = color;
+    this.image = document.createElement("canvas");
+    var self = this;
+    loader.finishImage(Gun.blobImage).then(function() {
+        self.image.width = Gun.blobImage.width;
+        self.image.height = Gun.blobImage.height;
+        var ctx = self.image.getContext("2d");
+        ctx.drawImage(Gun.blobImage, 0, 0);
+        ctx.globalCompositeOperation = "color";
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, self.image.width, self.image.height);
+    });
 }
 
 function Gun(game, tile, type) {

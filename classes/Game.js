@@ -10,8 +10,7 @@ function Game(canvas) {
     this.renderSorter = new RenderSorter();
     this.paused = false;
 
-    shadowImage = new Image();
-    shadowImage.src = "img/shadow.png";
+    shadowImage = loader.loadImage("img/shadow.png");
     
     this.lives = 10;
 

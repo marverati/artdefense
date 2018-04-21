@@ -23,3 +23,18 @@ body {
     max-width: 128px;
     max-height: 80px;
 }
+
+.loadingDiv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    text-align: center;
+    padding-top: 400px;
+    color: white;
+    font-size: 64px;
+    font-family: "Verdana";
+}
