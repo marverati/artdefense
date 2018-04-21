@@ -1,8 +1,9 @@
 
 Gun.blobImage = loader.loadImage("img/blob.png");
+Gun.splashImage = loader.loadImage("img/splash.png");
 
-var GUN_YELLOW = new GunType("Yellow", "yellow");
-var GUN_GREEN = new GunType("Green", "green");
+var GUN_YELLOW = new GunType("Yellow", "#ffd820");
+var GUN_GREEN = new GunType("Green", "#30c010");
 var GUN_BLUE = new GunType("Blue", "blue");
 var GUN_RED = new GunType("Red", "red");
 
@@ -10,25 +11,34 @@ function GunType(name, color) {
     this.name = name;
     this.color = color;
     this.image = document.createElement("canvas");
+    this.splash = document.createElement("canvas"); 
     var self = this;
-    loader.registerAnonymousMedia();
+    loader.registerAnonymousMedia(2);
     loader.finishImage(Gun.blobImage).then(function() {
-        self.image.width = Gun.blobImage.width;
-        self.image.height = Gun.blobImage.height;
-        var ctx = self.image.getContext("2d");
-        ctx.drawImage(Gun.blobImage, 0, 0);
-        ctx.globalCompositeOperation = "color";
-        ctx.fillStyle = color;
-        ctx.fillRect(0, 0, self.image.width, self.image.height);
-        ctx.globalCompositeOperation = "destination-in";
-        ctx.drawImage(Gun.blobImage, 0, 0);
+        colorize(self.image, Gun.blobImage, self.color);
         loader.finishAnonymousMedia();
     });
+    loader.finishImage(Gun.splashImage).then(function() {
+        colorize(self.splash, Gun.splashImage, self.color);
+        loader.finishAnonymousMedia();
+    });
+
+    function colorize(cnv, base, color) {
+        cnv.width = base.width;
+        cnv.height = base.height;
+        var ctx = cnv.getContext("2d");
+        ctx.drawImage(base, 0, 0);
+        ctx.globalCompositeOperation = "color";
+        ctx.fillStyle = color;
+        ctx.fillRect(0, 0, cnv.width, cnv.height);
+        ctx.globalCompositeOperation = "destination-in";
+        ctx.drawImage(base, 0, 0);
+    }
 }
 
 function Gun(game, tile, type) {
     if (tile.tp != TILE_EMPTY) {
-        throw new Error("Tried to add Gun to non-empty tile: " + type + " on " + tile.tx + "," + tile.ty + " (" + tile.tp.name + ")");
+        console.error("Tried to add Gun to non-empty tile: " + type + " on " + tile.tx + "," + tile.ty + " (" + tile.tp.name + ")");
     }
     tile.setGun(this);
     this.game = game;
@@ -40,6 +50,7 @@ function Gun(game, tile, type) {
     this.nextShot = 0;
     this.delay = 400;
     this.bulletSpeed = 1.5;
+    this.splashScale = 1;
     this.damage = 10;
     this.range = 420;
     this.range2 = this.range * this.range;
@@ -83,7 +94,7 @@ Gun.prototype.update = function(dt, t) {
         var angle = Math.atan2(dx, dy) + 0.2 * (Math.random() - Math.random());
         var vx = Math.sin(angle);
         var vy = Math.cos(angle);
-        var vh = 0.1 + Math.min(1, dis / 3000) + Math.random() * 0.3 - Math.random() * 0.2;
+        var vh = 0.25 + Math.min(1, dis / 2500) + Math.random() * 0.3 - Math.random() * 0.2;
         var bullet = new Bullet(this, this.bulletSpeed * vx, this.bulletSpeed * vy, this.bulletSpeed * vh);
         this.game.bullets.push(bullet);
         this.game.renderSorter.add(bullet);

@@ -6,6 +6,7 @@ function Game(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.levelCanvas = document.createElement("canvas");
+    this.groundCanvas = document.createElement("canvas");
     this.camera = new Camera();
     this.renderSorter = new RenderSorter();
     this.paused = false;
@@ -31,12 +32,15 @@ function Game(canvas) {
 Game.prototype.loadLevel = function(level) {
     this.level = level;
     this.level.renderToCanvas(this.levelCanvas);
+    this.groundCanvas.width = this.levelCanvas.width;
+    this.groundCanvas.height = this.levelCanvas.height;
+    this.groundContext = this.groundCanvas.getContext("2d");
 
     this.bullets = [];
     this.enemies = [];
     this.guns = [ 
-        // new Gun(this, this.level.get(4, 5), GUN_GREEN),
-        // new Gun(this, this.level.get(7, 3), GUN_YELLOW),
+        new Gun(this, this.level.get(4, 5), GUN_GREEN),
+        new Gun(this, this.level.get(7, 3), GUN_YELLOW),
         new Gun(this, this.level.get(2, 5), GUN_BLUE),
         new Gun(this, this.level.get(9, 4), GUN_RED)
     ];
@@ -96,6 +100,9 @@ Game.prototype.updateLogic = function() {
         var done = this.bullets[b].update(dt, this.tAbs);
         if (done) {
             this.renderSorter.remove(this.bullets[b]);
+            if (this.bullets[b].h <= 0) {
+                renderCanvasSplash(this.groundContext, this.bullets[b].gun.tp.splash, this.bullets[b].x, this.bullets[b].y, 0.25);
+            }
             this.bullets.splice(b, 1);
         }
     }
@@ -126,7 +133,7 @@ Game.prototype.render = function() {
     this.camera.applyTransform(this.ctx);
 
     // Level Paint
-    // TODO
+    this.ctx.drawImage(this.groundCanvas, 0, 0);
 
     // Level Geometry
     this.ctx.drawImage(this.levelCanvas, 0, 0);

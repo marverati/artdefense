@@ -1,5 +1,5 @@
 
-var BULLET_GRAVITY = 0.001;
+var BULLET_GRAVITY = 0.005;
 
 function Bullet(gun, vx, vy, vh) {
     this.gun = gun;
@@ -54,22 +54,5 @@ Bullet.prototype.render = function(ctx, camera) {
 };
 
 Bullet.prototype.splash = function(enemy, point) {
-    this.particles = Math.round(8 + Math.random() * 13);
-    var off = 36;
-    for (var i = 0; i < this.particles; i++) {
-        var x0 = this.x + off * rnd() * rnd();
-        var y0 = this.y + off * rnd() * rnd();
-        var h0 = this.h + off * rnd() * rnd();
-        var step = 3, radius = 2;
-        for (var s = 5; s >= -5; s--) {
-            var x = x0 + step * s * this.vx;
-            var y = y0 + step * s * this.vy;
-            var h = h0 + step * s * this.vh;
-            var p = enemy.collidesWith(x, y, h, radius);
-            if (p) {
-                enemy.splash(this.gun.tp.color, p);
-                break;
-            }
-        }
-    }
+    enemy.splash(this.gun.tp.splash, point[0], point[1], this.gun.splashScale);
 };
