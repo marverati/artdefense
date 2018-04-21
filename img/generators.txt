@@ -1,0 +1,12 @@
+Shadow
+setSize(512, 512);
+gen((x,y) => {
+  x -= 256; y -= 256;
+  var d = Math.sqrt(x*x + y*y);
+  var f = 1 - d / 255;
+  return f <= 0 ? [0,0,0,0] : [0,0,0, 150 * (0.5 - 0.5 * Math.cos(Math.PI * f))];
+});
+scaleSize(1, 0.5);
+scaleSize(0.5, 0.5);
+
+Blob
