@@ -9,11 +9,29 @@ function TileType(color) {
     this.color = color;
 }
 
-function Tile(tx, ty, x, y) {
+function Tile(level, tx, ty, x, y) {
+    this.level = level;
     this.tp = TILE_EMPTY;
     this.tower = null;
     this.tx = tx;
     this.ty = ty;
     this.x = x;
     this.y = y;
+    this.nextTiles = [];
+    this.nextCycle = 0;
 }
+
+Tile.prototype.getNextTile = function() {
+    if (this.nextTiles.length < 1) {
+        return this.level.targetTile;
+    }
+    var next = this.nextTiles[this.nextCycle];
+    this.nextCycle = (this.nextCycle + 1) % this.nextTiles.length;
+    return next;
+};
+
+Tile.prototype.addNextTile = function(t) {
+    if (t != this) {
+        this.nextTiles.push(t);
+    }
+};

@@ -45,34 +45,45 @@ function Level(w, h, trgx, trgy, spawns) {
     for (var y = 0; y < h; y++) {
         this.tiles[y] = [];
         for (var x = 0; x < w; x++) {
-            this.tiles[y][x] = new Tile(x, y, (x + 0.5) * TILE_SIZE, (y + 0.5) * TILE_SIZE);
+            this.tiles[y][x] = new Tile(this, x, y, (x + 0.5) * TILE_SIZE, (y + 0.5) * TILE_SIZE);
         }
     }
     this.spawns = spawns instanceof Array ? spawns : [ spawns ];
     // Apply Spawn and Path tiles
     for (var spawn of this.spawns) {
-        this.tiles[spawn.startY][spawn.startX].tp = TILE_SPAWN;
-        // connect path nodes
+        var prevTile = this.tiles[spawn.startY][spawn.startX];
+        prevTile.tp = TILE_SPAWN;
+        // connect path nodes; for each segment:
         for (var i = 1; i < spawn.path.length; i++) {
             var prev = spawn.path[i - 1];
             var current = spawn.path[i];
+            var goal = this.get(current[0], current[1]);
             var dx = current[0] - prev[0], dy = current[1] - prev[1];
             var steps = Math.abs(dx) + Math.abs(dy);
+            // update target of very first tile
+            this.tiles[prev[1]][prev[0]].addNextTile(goal);
+            // for each tile of segment:
             for (var s = 1; s <= steps; s++) {
                 var f = s / steps;
                 var tx = prev[0] + Math.round(f * dx),
                     ty = prev[1] + Math.round(f * dy);
                 this.tiles[ty][tx].tp = TILE_PATH;
+                this.tiles[ty][tx].addNextTile(goal);
             }
         }
     }
     // Target tile
-    this.tiles[trgy][trgx].tp = TILE_TARGET;
+    this.targetTile = this.get(trgx, trgy);
+    this.targetTile.tp = TILE_TARGET;
+
+    // Store canvas to render self into on updates
     this.canvas = null;
 }
 
 Level.prototype.get = function(x, y) {
-    return this.tiles[y][x];
+    x = (x < 0) ? 0 : (x >= this.w) ? this.w - 1 : x;
+    y = (y < 0) ? 0 : (y >= this.h) ? this.h - 1 : y;
+    return this.tiles[Math.floor(y)][Math.floor(x)];
 };
 
 Level.prototype.forAllTiles = function(handler) {

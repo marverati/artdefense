@@ -7,18 +7,21 @@ function Game(canvas) {
     this.levelCanvas = document.createElement("canvas");
     this.camera = new Camera();
 
+    this.gameSpeed = 0.1;
+
     this.guns = [];
     this.enemies = [];
 
     this.initializeControls();
 
-    requestAnimationFrame(this.update.bind(this));
+    this.tPrev = Date.now();
+    this.update();
 }
 
 Game.prototype.loadLevel = function(level) {
     this.level = level;
     this.level.renderToCanvas(this.levelCanvas);
-    this.enemies = [ new Enemy(this.level.get(7, 7)) ];
+    this.enemies = [ new Enemy(this.level.get(1, 1)) ];
     this.camera.setPos( this.level.w / 2 * TILE_SIZE, this.level.h / 2 * TILE_SIZE);
     this.render();
 };
@@ -36,7 +39,15 @@ Game.prototype.updateControls = function() {
 };
 
 Game.prototype.updateLogic = function() {
+    // Timing
+    var t = Date.now();
+    var dt = this.gameSpeed * (t - this.tPrev);
+    this.tPrev = t;
 
+    // Enemy movement
+    for (var e of this.enemies) {
+        e.update(dt);
+    }
 };
 
 Game.prototype.render = function() {
@@ -64,7 +75,6 @@ Game.prototype.render = function() {
 
     // Canvases, Guns and Blobs
     for (var e of this.enemies) {
-        e.rotation = Date.now() * 0.001;
         e.render(this.ctx, this.camera);
     }
 };
