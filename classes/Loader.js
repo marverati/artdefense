@@ -47,6 +47,18 @@ Loader.prototype.loadImage = function(src) {
     return img;
 };
 
+Loader.prototype.registerAnonymousMedia = function(count) {
+    if (count == null) { count = 1; }
+    this.mediaCount += count;
+};
+
+Loader.prototype.finishAnonymousMedia = function(count) {
+    if (count == null) { count = 1; }
+    this.loadedCount += count;
+    this.processedCount += count;
+    this.checkFinish();
+};
+
 Loader.prototype.beginLoading = function() {
     this.allowFinish = true;
     this.checkFinish();

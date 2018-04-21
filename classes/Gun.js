@@ -11,6 +11,7 @@ function GunType(name, color) {
     this.color = color;
     this.image = document.createElement("canvas");
     var self = this;
+    loader.registerAnonymousMedia();
     loader.finishImage(Gun.blobImage).then(function() {
         self.image.width = Gun.blobImage.width;
         self.image.height = Gun.blobImage.height;
@@ -19,6 +20,9 @@ function GunType(name, color) {
         ctx.globalCompositeOperation = "color";
         ctx.fillStyle = color;
         ctx.fillRect(0, 0, self.image.width, self.image.height);
+        ctx.globalCompositeOperation = "destination-in";
+        ctx.drawImage(Gun.blobImage, 0, 0);
+        loader.finishAnonymousMedia();
     });
 }
 
@@ -45,10 +49,11 @@ function Gun(game, tile, type) {
 Gun.prototype.render = function(ctx, camera) {
     var [x, y] = camera.transform(this.tile.x, this.tile.y, 25);
     drawShadow(ctx, x, y + 25, 0.4);
-    ctx.beginPath();
-    ctx.arc(x, y, 30, 0, 6.28);
-    ctx.fillStyle = this.tp.color;
-    ctx.fill();
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.scale(0.5, 0.5);
+    ctx.drawImage(this.tp.image, -this.tp.image.width / 2, -this.tp.image.height / 2);
+    ctx.restore();
 };
 
 Gun.prototype.update = function(dt, t) {
