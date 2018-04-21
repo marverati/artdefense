@@ -17,6 +17,8 @@ function Gun(game, tile, type) {
     this.game = game;
     this.tile = tile;
     this.tp = type;
+    this.x = this.tile.x;
+    this.y = this.tile.y;
     this.target = null;
     this.nextShot = 0;
     this.delay = 400;
@@ -29,6 +31,7 @@ function Gun(game, tile, type) {
 
 Gun.prototype.render = function(ctx, camera) {
     var [x, y] = camera.transform(this.tile.x, this.tile.y, 25);
+    drawShadow(ctx, x, y + 25, 0.4);
     ctx.beginPath();
     ctx.arc(x, y, 30, 0, 6.28);
     ctx.fillStyle = this.tp.color;
@@ -58,13 +61,14 @@ Gun.prototype.update = function(dt, t) {
         // Create bullet
         var dx = this.target.x - this.tile.x;
         var dy = this.target.y - this.tile.y;
-        var dis = Math.sqrt(dx * dx + dy * dy) + 50 * Math.random();
+        var dis = Math.sqrt(dx * dx + dy * dy) + 40 * Math.random();
         var angle = Math.atan2(dx, dy) + 0.2 * (Math.random() - Math.random());
         var vx = Math.sin(angle);
         var vy = Math.cos(angle);
-        var vh = Math.min(1, dis / 1800) + Math.random() * 0.3 - Math.random() * 0.2;
+        var vh = 0.1 + Math.min(1, dis / 3000) + Math.random() * 0.3 - Math.random() * 0.2;
         var bullet = new Bullet(this, this.bulletSpeed * vx, this.bulletSpeed * vy, this.bulletSpeed * vh);
         this.game.bullets.push(bullet);
+        this.game.renderSorter.add(bullet);
     }
 };
 

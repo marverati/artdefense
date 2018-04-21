@@ -15,7 +15,7 @@ function Enemy(tile) {
     this.rotation = game ? game.camera.rotation + Math.PI / 2 : 0;
     this.speed = 0.1;
     this.h = 15;
-    this.width = 80;
+    this.width = 180;
     this.height = 120;
     this.canvas = document.createElement("canvas");
     this.canvas.width = this.width * 5;
@@ -84,9 +84,11 @@ Enemy.prototype.render = function(ctx, camera) {
     var rotation = this.rotation - camera.rotation;
     ctx.save();
     ctx.translate(x, y);
+
     // shearing
     var sin = Math.sin(rotation), cos = Math.cos(rotation);
     ctx.transform(cos, sin * camera.yScale, 0, 1, 0, 0);
+    drawShadow(ctx, 0, this.h, 0.6);
     ctx.drawImage(this.canvas, -this.width / 2, -this.height, this.width, this.height);
     ctx.restore();
 
@@ -135,8 +137,8 @@ Enemy.prototype.collidesWith = function(x, y, h, r) {
         return false;
     }
     // Minimum distance met to calculate collision properly
-    var offx = w * Math.cos(this.rotation);
-    var offy = h * Math.sin(this.rotation);
+    var offx = -w * Math.sin(this.rotation);
+    var offy = h * Math.cos(this.rotation);
     var x1 = this.x - offx, x2 = this.x + offx;
     var y1 = this.y - offy, y2 = this.y + offy;
     var p = projectPointOnLine(x, y, x1, y1, x2, y2, true);
@@ -144,6 +146,11 @@ Enemy.prototype.collidesWith = function(x, y, h, r) {
     if (dx * dx + dy * dy <= r * r) {
         // p is absolute point in 2D x/y space, now transform into relative canvas space
         var sx = p[2], sy = (h - this.h) / this.height;
+        if (window["logIt"]) {
+            console.log(this.rotation, " -> ", x1 << 0, y1 << 0, x2 << 0, y2 << 0);
+            console.log(p, " causes relative ", sx, sy);
+            logIt = false;
+        }
         return [sx, sy];
     }
 };
@@ -157,7 +164,7 @@ function projectPointOnLine(x, y, x1, y1, x2, y2, limitToLine) {
     return [x1 + s * dx, y1 + s * dy, s];
 }
 
-Enemy.prototype.splash = function(color, p) {
+Enemy.prototype.spreadSplash = function(color, p) {
     var x = p[0] * this.canvas.width, y = (1 - p[1]) * this.canvas.height;
     this.ctx.fillStyle = color;
     var count = 3 + 12 * Math.random() * Math.random();
@@ -167,5 +174,22 @@ Enemy.prototype.splash = function(color, p) {
         this.ctx.beginPath();
         this.ctx.arc(x + ox, y + oy, 10 + Math.random() * 25, 0, 6.28);
         this.ctx.fill();
+    }
+};
+
+Enemy.prototype.simpleSplash = function(color, p) {
+    var x = p[0] * this.canvas.width, y = (1 - p[1]) * this.canvas.height;
+    this.ctx.fillStyle = color;
+    this.ctx.beginPath();
+    this.ctx.arc(x, y, 18 + Math.random() * 20 - Math.random(8), 0, 6.28);
+    this.ctx.fill();
+};
+
+Enemy.prototype.splashDirection = function(color, p, direction) {
+    var count = Math.round(8 + 12 * Math.random());
+    for (var ang = 0; ang < count; ang++) {
+        var angle = 2 * Math.PI * ang / count + 0.5 * rnd();
+        var dis = rnd(30);
+
     }
 };

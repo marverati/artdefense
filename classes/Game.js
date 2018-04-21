@@ -7,10 +7,15 @@ function Game(canvas) {
     this.ctx = canvas.getContext("2d");
     this.levelCanvas = document.createElement("canvas");
     this.camera = new Camera();
+    this.renderSorter = new RenderSorter();
+    this.paused = false;
+
+    shadowImage = new Image();
+    shadowImage.src = "img/shadow.png";
     
     this.lives = 10;
 
-    this.gameSpeed = 1;
+    this.gameSpeed = 0.5;
 
     this.guns = [];
     this.enemies = [];
@@ -31,11 +36,13 @@ Game.prototype.loadLevel = function(level) {
     this.bullets = [];
     this.enemies = [];
     this.guns = [ 
-        new Gun(this, this.level.get(4, 6), GUN_GREEN),
-        new Gun(this, this.level.get(8, 2), GUN_YELLOW),
-        new Gun(this, this.level.get(2, 6), GUN_BLUE),
-        new Gun(this, this.level.get(4, 1), GUN_RED)
+        // new Gun(this, this.level.get(4, 5), GUN_GREEN),
+        // new Gun(this, this.level.get(7, 3), GUN_YELLOW),
+        new Gun(this, this.level.get(2, 5), GUN_BLUE),
+        new Gun(this, this.level.get(9, 4), GUN_RED)
     ];
+    var self = this;
+    this.guns.forEach(function(gun) { self.renderSorter.add(gun); });
 
     this.camera.setPos( this.level.w / 2 * TILE_SIZE, this.level.h / 2 * TILE_SIZE);
     this.render();
@@ -56,6 +63,10 @@ Game.prototype.updateControls = function() {
 };
 
 Game.prototype.updateLogic = function() {
+    if (this.paused) {
+        return;
+    }
+
     // Timing
     var t = Date.now();
     var dt = (t - this.tPrev);
@@ -85,6 +96,7 @@ Game.prototype.updateLogic = function() {
     for (var b = this.bullets.length - 1; b >= 0; b--) {
         var done = this.bullets[b].update(dt, this.tAbs);
         if (done) {
+            this.renderSorter.remove(this.bullets[b]);
             this.bullets.splice(b, 1);
         }
     }
@@ -98,6 +110,7 @@ Game.prototype.updateLogic = function() {
                 e.alive = false;
                 this.lives--;
             }
+            this.renderSorter.remove(this.enemies[i]);
             this.enemies.splice(i, 1);
         }
     }
@@ -125,6 +138,8 @@ Game.prototype.render = function() {
     this.ctx.restore();
 
     // Canvases, Guns and Bullets
+    this.renderSorter.render(this.ctx, this.camera);
+    /*
     for (var e of this.enemies) {
         e.render(this.ctx, this.camera);
     }
@@ -133,7 +148,7 @@ Game.prototype.render = function() {
     }
     for (var b of this.bullets) {
         b.render(this.ctx, this.camera);
-    }
+    }*/
 };
 
     Game.prototype.renderHover = function(tx, ty, colorOrValid) {
@@ -157,4 +172,20 @@ Game.prototype.handleKey = function(e) {
         var dy = 32 * (ud * this.camera.cos - rl * this.camera.sin);
         this.camera.move(dx, dy);
     }
+    if (e.key == "p") {
+        this.paused = !this.paused;
+    }
 };
+
+
+function drawShadow(ctx, x, y, scale, fade) {
+    if (shadowImage) {
+        ctx.save();
+        ctx.translate(x, y);
+        if (fade != null) { ctx.globalAlpha *= fade; }
+        var sc = (scale == null) ? 1 : scale;
+        ctx.scale(sc, sc);
+        ctx.drawImage(shadowImage, -shadowImage.width / 2, -shadowImage.height / 2);
+        ctx.restore();
+    }
+}
