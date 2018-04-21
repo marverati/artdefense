@@ -1,4 +1,5 @@
 
+const GAME_MAX_TD = 100;
 
 function Game(canvas) {
     this.level = null;
@@ -6,15 +7,20 @@ function Game(canvas) {
     this.ctx = canvas.getContext("2d");
     this.levelCanvas = document.createElement("canvas");
     this.camera = new Camera();
-
-    this.gameSpeed = 0.1;
+    
+    this.lives = 10;
+    
+    this.gameSpeed = 1;
 
     this.guns = [];
     this.enemies = [];
 
+    createLevels(this);
+
     this.initializeControls();
 
     this.tPrev = Date.now();
+    this.tAbs = 0;
     this.update();
 }
 
@@ -27,9 +33,11 @@ Game.prototype.loadLevel = function(level) {
 };
 
 Game.prototype.update = function() {
-    this.updateControls();
-    this.updateLogic();
-    this.render();
+    if (this.level) {
+        this.updateControls();
+        this.updateLogic();
+        this.render();
+    }
 
     requestAnimationFrame(this.update.bind(this));
 };
@@ -41,14 +49,34 @@ Game.prototype.updateControls = function() {
 Game.prototype.updateLogic = function() {
     // Timing
     var t = Date.now();
-    var dt = this.gameSpeed * (t - this.tPrev);
+    var dt = (t - this.tPrev);
+    if (dt > GAME_MAX_TD) { dt = GAME_MAX_TD; }
+    dt = this.gameSpeed * dt;
+    this.tAbs += dt;
     this.tPrev = t;
 
+    // Level and spawning
+    this.level.update(dt, this.tAbs);
     // Enemy movement
+    var finished = [];
     for (var e of this.enemies) {
-        e.update(dt);
+        var done = e.update(dt, this.tAbs);
+        if (done) {
+            finished.push(e);
+        }
+    }
+    for (var e of finished) {
+        this.handleFinishedEnemy(e);
     }
 };
+
+    Game.prototype.handleFinishedEnemy = function(e) {
+        var i = this.enemies.indexOf(e);
+        if (i >= 0) {
+            this.lives--;
+            this.enemies.splice(i, 1);
+        }
+    }
 
 Game.prototype.render = function() {
     // Clear

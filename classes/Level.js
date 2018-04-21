@@ -36,7 +36,8 @@ Spawn.prototype.moveLeft = function(v) {
 
 
 
-function Level(w, h, trgx, trgy, spawns) {
+function Level(game, w, h, trgx, trgy, spawns, waves) {
+    this.game = game;
     this.w = w;
     this.h = h;
     this.targetX = trgx;
@@ -51,6 +52,7 @@ function Level(w, h, trgx, trgy, spawns) {
     this.spawns = spawns instanceof Array ? spawns : [ spawns ];
     // Apply Spawn and Path tiles
     for (var spawn of this.spawns) {
+        console.log(spawn);
         var prevTile = this.tiles[spawn.startY][spawn.startX];
         prevTile.tp = TILE_SPAWN;
         // connect path nodes; for each segment:
@@ -75,6 +77,15 @@ function Level(w, h, trgx, trgy, spawns) {
     // Target tile
     this.targetTile = this.get(trgx, trgy);
     this.targetTile.tp = TILE_TARGET;
+
+    // Waves
+    this.currentWave = 0;
+    this.waves = waves;
+    console.log(this.waves);
+    this.waveStarted = true;
+    for (var wave of this.waves) {
+        wave.level = this;
+    }
 
     // Store canvas to render self into on updates
     this.canvas = null;
@@ -136,4 +147,15 @@ Level.prototype.renderToCanvas = function(cnv) {
         ctx.lineTo(tileSize * this.w + segment, tileSize * y);
         ctx.stroke();
     }
+};
+
+Level.prototype.update = function(dt, t) {
+    if (this.waveStarted) {
+        this.waves[ this.currentWave ].update(t);
+    }
+};
+
+Level.prototype.spawnUnit = function(tp) {
+    var tile = this.get(this.spawns[0].startX, this.spawns[0].startY);
+    this.game.enemies.push( new Enemy(tile) );
 };

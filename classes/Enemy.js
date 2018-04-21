@@ -7,8 +7,8 @@ function Enemy(tile) {
     this.x = tile.x;
     this.y = tile.y;
     this.targetRotation = 0;
-    this.rotation = 0;
-    this.speed = 1;
+    this.rotation = game ? game.camera.rotation + Math.PI / 2 : 0;
+    this.speed = 0.1;
     this.h = 50;
     this.width = 80;
     this.height = 120;
