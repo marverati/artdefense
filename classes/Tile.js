@@ -1,18 +1,19 @@
 
-TILE_EMPTY = new TileType(null);
-TILE_PATH = new TileType("rgba(0, 0, 0, 0.1)");
-TILE_TARGET = new TileType("rgba(80, 80, 240, 0.5)");
-TILE_SPAWN = new TileType("rgba(0, 0, 0, 0.4)");
-TILE_TOWER = new TileType("rgba(120, 120, 240, 0.2)");
+TILE_EMPTY = new TileType("Empty", null);
+TILE_PATH = new TileType("Path", "rgba(0, 0, 0, 0.1)");
+TILE_TARGET = new TileType("Target", "rgba(80, 80, 240, 0.5)");
+TILE_SPAWN = new TileType("Spawn", "rgba(0, 0, 0, 0.4)");
+TILE_GUN = new TileType("Gun", "rgba(120, 120, 240, 0.2)");
 
-function TileType(color) {
+function TileType(name, color) {
+    this.name = name;
     this.color = color;
 }
 
 function Tile(level, tx, ty, x, y) {
     this.level = level;
     this.tp = TILE_EMPTY;
-    this.tower = null;
+    this.gun = null;
     this.tx = tx;
     this.ty = ty;
     this.x = x;
@@ -33,5 +34,12 @@ Tile.prototype.getNextTile = function() {
 Tile.prototype.addNextTile = function(t) {
     if (t != this) {
         this.nextTiles.push(t);
+    }
+};
+
+Tile.prototype.setGun = function(gun) {
+    if (this.tp == TILE_EMPTY) {
+        this.gun = gun;
+        this.tp = TILE_GUN;
     }
 };

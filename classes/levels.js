@@ -11,8 +11,8 @@ function createLevels(game) {
         7, 7,
         new Spawn(1, 1).moveDown(3).moveRight(6).moveDown(3),
         [
-            new Wave(5, function (w) { return [4 * w, null]; }),
-            new Wave(10, function (w) { return [3 * w, null]; })
+            new Wave(5, function (w) { return [6 * w, null]; }),
+            new Wave(10, function (w) { return [5 * w, null]; })
         ]
     );
     

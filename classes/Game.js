@@ -9,7 +9,7 @@ function Game(canvas) {
     this.camera = new Camera();
     
     this.lives = 10;
-    
+
     this.gameSpeed = 1;
 
     this.guns = [];
@@ -27,7 +27,16 @@ function Game(canvas) {
 Game.prototype.loadLevel = function(level) {
     this.level = level;
     this.level.renderToCanvas(this.levelCanvas);
-    this.enemies = [ new Enemy(this.level.get(1, 1)) ];
+
+    this.bullets = [];
+    this.enemies = [];
+    this.guns = [ 
+        new Gun(this, this.level.get(4, 6), GUN_GREEN),
+        new Gun(this, this.level.get(8, 2), GUN_YELLOW),
+        new Gun(this, this.level.get(2, 6), GUN_BLUE),
+        new Gun(this, this.level.get(4, 1), GUN_RED)
+    ];
+
     this.camera.setPos( this.level.w / 2 * TILE_SIZE, this.level.h / 2 * TILE_SIZE);
     this.render();
 };
@@ -68,12 +77,27 @@ Game.prototype.updateLogic = function() {
     for (var e of finished) {
         this.handleFinishedEnemy(e);
     }
+    // Guns
+    for (var g of this.guns) {
+        g.update(dt, this.tAbs);
+    }
+    // Bullets
+    for (var b = this.bullets.length - 1; b >= 0; b--) {
+        var done = this.bullets[b].update(dt, this.tAbs);
+        if (done) {
+            this.bullets.splice(b, 1);
+        }
+    }
 };
 
     Game.prototype.handleFinishedEnemy = function(e) {
         var i = this.enemies.indexOf(e);
         if (i >= 0) {
-            this.lives--;
+            if (e.alive) {
+                // When enemy is still alive while being destroyed, it reached the target; otherwise killed by bullet
+                e.alive = false;
+                this.lives--;
+            }
             this.enemies.splice(i, 1);
         }
     }
@@ -96,14 +120,19 @@ Game.prototype.render = function() {
     this.ctx.drawImage(this.levelCanvas, 0, 0);
 
     // Hover Effect
-    this.renderHover(5, 4, true);
-    this.renderHover(5, 5, true);
+    // TODO
 
     this.ctx.restore();
 
-    // Canvases, Guns and Blobs
+    // Canvases, Guns and Bullets
     for (var e of this.enemies) {
         e.render(this.ctx, this.camera);
+    }
+    for (var g of this.guns) {
+        g.render(this.ctx, this.camera);
+    }
+    for (var b of this.bullets) {
+        b.render(this.ctx, this.camera);
     }
 };
 

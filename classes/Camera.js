@@ -39,5 +39,5 @@ Camera.prototype.transform = function(x, y, h) {
     // Scale Y
     cy *= this.yScale;
     // Add height
-    return [cx, cy];
+    return [cx, cy - h];
 };
