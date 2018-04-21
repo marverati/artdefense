@@ -2,12 +2,15 @@
 body {
     background-color: white;
     overflow: hidden;
+    background-color: #f0f0f0;
 }
 
 #gameCanvas {
+    display: block;
     max-width: 100%;
     max-height: 90%;
     margin: auto;
+    border: 1px solid #ccc;
 }
 
 #gallery {
