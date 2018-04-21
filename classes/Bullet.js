@@ -1,5 +1,5 @@
 
-var BULLET_GRAVITY = 0.005;
+var BULLET_GRAVITY = 0.001;
 
 function Bullet(gun, vx, vy, vh) {
     this.gun = gun;

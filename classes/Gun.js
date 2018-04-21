@@ -2,14 +2,20 @@
 Gun.blobImage = loader.loadImage("img/blob.png");
 Gun.splashImage = loader.loadImage("img/splash.png");
 
-var GUN_YELLOW = new GunType("Yellow", "#ffd820");
-var GUN_GREEN = new GunType("Green", "#30c010");
-var GUN_BLUE = new GunType("Blue", "blue");
-var GUN_RED = new GunType("Red", "red");
+var GUN_YELLOW = new GunType("Yellow", "#ffd820", 2, 100, 350, 1, 0.3, 0.5);
+var GUN_GREEN = new GunType("Green", "#30c010", 5, 800, 300, 0.5, 0.8, 0.5);
+var GUN_BLUE = new GunType("Blue", "blue", 6, 1200, 520, 0.75, 1, 1);
+var GUN_RED = new GunType("Red", "red", 12, 1000, 420, 0.7, 0.75, 1);
 
-function GunType(name, color) {
+function GunType(name, color, damage, delay, range, bulletSpeed, splashScale, scattering) {
     this.name = name;
     this.color = color;
+    this.damage = damage;
+    this.delay = delay;
+    this.range = range;
+    this.bulletSpeed = bulletSpeed;
+    this.splashScale = splashScale;
+    this.scattering = scattering;
     this.image = document.createElement("canvas");
     this.splash = document.createElement("canvas"); 
     var self = this;
@@ -48,11 +54,12 @@ function Gun(game, tile, type) {
     this.y = this.tile.y;
     this.target = null;
     this.nextShot = 0;
-    this.delay = 400;
-    this.bulletSpeed = 1.5;
-    this.splashScale = 1;
-    this.damage = 10;
-    this.range = 420;
+    this.delay = type.delay;
+    this.bulletSpeed = type.bulletSpeed;
+    this.splashScale = type.splashScale;
+    this.scattering = type.scattering;
+    this.damage = type.damage;
+    this.range = type.range;
     this.range2 = this.range * this.range;
     this.rotation = 0;
 }
@@ -90,11 +97,11 @@ Gun.prototype.update = function(dt, t) {
         // Create bullet
         var dx = this.target.x - this.tile.x;
         var dy = this.target.y - this.tile.y;
-        var dis = Math.sqrt(dx * dx + dy * dy) + 40 * Math.random();
-        var angle = Math.atan2(dx, dy) + 0.2 * (Math.random() - Math.random());
+        var dis = Math.sqrt(dx * dx + dy * dy) + 40 * Math.random() * this.scattering;
+        var angle = Math.atan2(dx, dy) + 0.2 * (Math.random() - Math.random()) * this.scattering;
         var vx = Math.sin(angle);
         var vy = Math.cos(angle);
-        var vh = 0.25 + Math.min(1, dis / 2500) + Math.random() * 0.3 - Math.random() * 0.2;
+        var vh = (0.18 + Math.min(1, dis / 2500)) / this.bulletSpeed + this.scattering * (Math.random() * 0.3 - Math.random() * 0.2);
         var bullet = new Bullet(this, this.bulletSpeed * vx, this.bulletSpeed * vy, this.bulletSpeed * vh);
         this.game.bullets.push(bullet);
         this.game.renderSorter.add(bullet);

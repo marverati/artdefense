@@ -8,7 +8,7 @@ function Enemy(tile) {
     this.y = tile.y;
 
     this.alive = true;
-    this.maxHp = 320;
+    this.maxHp = 180;
     this.hp = this.maxHp;
 
     this.targetRotation = 0;

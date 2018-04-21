@@ -15,7 +15,7 @@ function Game(canvas) {
     
     this.lives = 10;
 
-    this.gameSpeed = 0.5;
+    this.gameSpeed = 1;
 
     this.guns = [];
     this.enemies = [];
