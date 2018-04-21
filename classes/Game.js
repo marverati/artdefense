@@ -7,6 +7,9 @@ function Game(canvas) {
     this.levelCanvas = document.createElement("canvas");
     this.camera = new Camera();
 
+    this.guns = [];
+    this.enemies = [];
+
     this.initializeControls();
 
     requestAnimationFrame(this.update.bind(this));
@@ -15,6 +18,8 @@ function Game(canvas) {
 Game.prototype.loadLevel = function(level) {
     this.level = level;
     this.level.renderToCanvas(this.levelCanvas);
+    this.enemies = [ new Enemy(this.level.get(7, 7)) ];
+    this.camera.setPos( this.level.w / 2 * TILE_SIZE, this.level.h / 2 * TILE_SIZE);
     this.render();
 };
 
@@ -36,10 +41,12 @@ Game.prototype.updateLogic = function() {
 
 Game.prototype.render = function() {
     // Clear
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
     this.ctx.fillStyle = "white";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Isometry
+    this.ctx.translate(this.canvas.width / 2, this.canvas.height / 2);
     this.ctx.save();
     this.camera.applyTransform(this.ctx);
 
@@ -52,6 +59,10 @@ Game.prototype.render = function() {
     this.ctx.restore();
 
     // Canvases, Guns and Blobs
+    for (var e of this.enemies) {
+        e.rotation = Date.now() * 0.001;
+        e.render(this.ctx, this.camera);
+    }
 };
 
 
@@ -63,6 +74,8 @@ Game.prototype.handleKey = function(e) {
     var rl = (e.key == "ArrowRight" ? 1 : 0) - (e.key == "ArrowLeft" ? 1 : 0);
     var ud = (e.key == "ArrowDown" ? 1 : 0) - (e.key == "ArrowUp" ? 1 : 0);
     if (rl || ud) {
-        this.camera.move(32 * rl, 32 * ud);
+        var dx = 32 * (ud * this.camera.sin + rl * this.camera.cos);
+        var dy = 32 * (ud * this.camera.cos - rl * this.camera.sin);
+        this.camera.move(dx, dy);
     }
 };

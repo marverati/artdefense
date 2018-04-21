@@ -1,4 +1,6 @@
 
+const TILE_SIZE = 96;
+
 function Spawn(x, y) {
     this.startX = x;
     this.startY = y;
@@ -43,7 +45,7 @@ function Level(w, h, trgx, trgy, spawns) {
     for (var y = 0; y < h; y++) {
         this.tiles[y] = [];
         for (var x = 0; x < w; x++) {
-            this.tiles[y][x] = new Tile();
+            this.tiles[y][x] = new Tile(x, y, (x + 0.5) * TILE_SIZE, (y + 0.5) * TILE_SIZE);
         }
     }
     this.spawns = spawns instanceof Array ? spawns : [ spawns ];
@@ -69,6 +71,10 @@ function Level(w, h, trgx, trgy, spawns) {
     this.canvas = null;
 }
 
+Level.prototype.get = function(x, y) {
+    return this.tiles[y][x];
+};
+
 Level.prototype.forAllTiles = function(handler) {
     for (var y = 0; y < this.h; y++) {
         for (var x = 0; x < this.w; x++) {
@@ -84,7 +90,7 @@ Level.prototype.renderToCanvas = function(cnv) {
         cnv = this.canvas;
     }
 
-    var tileSize = 96;
+    var tileSize = TILE_SIZE;
     var w = this.w * tileSize;
     var h = this.h * tileSize;
     cnv.width = w + 1;
@@ -103,8 +109,8 @@ Level.prototype.renderToCanvas = function(cnv) {
     });
 
     // Framing
-    ctx.lineWidth = 1;
-    ctx.strokeStyle = "rgba(0, 0, 0, 0.2)";
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = "rgba(0, 0, 0, 0.25)";
     var segment = 8;
     ctx.setLineDash([segment, segment]);
     for (var x = 0; x <= this.w; x++) {

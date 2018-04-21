@@ -9,7 +9,11 @@ function TileType(color) {
     this.color = color;
 }
 
-function Tile() {
+function Tile(tx, ty, x, y) {
     this.tp = TILE_EMPTY;
     this.tower = null;
+    this.tx = tx;
+    this.ty = ty;
+    this.x = x;
+    this.y = y;
 }

@@ -24,7 +24,20 @@ Camera.prototype.setRotation = function(angle) {
 };
 
 Camera.prototype.applyTransform = function(ctx) {
-    ctx.translate(-this.x, -this.y);
     ctx.scale(1, this.yScale);
     ctx.rotate(this.rotation);
+    ctx.translate(-this.x, -this.y);
+};
+
+Camera.prototype.transform = function(x, y, h) {
+    // Translate
+    x -= this.x;
+    y -= this.y;
+    // Rotate
+    var cx = this.cos * x - this.sin * y;
+    var cy = this.sin * x + this.cos * y;
+    // Scale Y
+    cy *= this.yScale;
+    // Add height
+    return [cx, cy];
 };
