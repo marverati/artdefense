@@ -1,6 +1,7 @@
 
-function Enemy(tile) {
+function Enemy(tile, type) {
     this.tile = tile;
+    this.type = type;
     this.id = Enemy.count++;
     this.startTile = tile;
     this.targetTile = tile;
@@ -21,7 +22,7 @@ function Enemy(tile) {
     this.canvas.width = this.width * 3;
     this.canvas.height = this.height * 3;
     this.ctx = this.canvas.getContext("2d");
-    this.ctx.fillStyle = "#eee";
+    this.ctx.fillStyle = type.color;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.moveOn();
 }

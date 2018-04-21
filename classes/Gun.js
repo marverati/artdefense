@@ -7,6 +7,8 @@ var GUN_GREEN = new GunType("Green", "#30c010", 5, 800, 300, 0.5, 0.8, 0.5);
 var GUN_BLUE = new GunType("Blue", "blue", 6, 1200, 520, 0.75, 1, 1);
 var GUN_RED = new GunType("Red", "red", 12, 1000, 420, 0.7, 0.75, 1);
 
+var TYPE_BLANC = new GunType("Blanc", "#eee");
+
 function GunType(name, color, damage, delay, range, bulletSpeed, splashScale, scattering) {
     this.name = name;
     this.color = color;
@@ -81,7 +83,7 @@ Gun.prototype.update = function(dt, t) {
             // Find new target
             var self = this;
             var enemies = this.game.enemies.filter(function(e) {
-                return self.isInRange(e.x, e.y);
+                return self.isInRange(e.x, e.y) && e.type != self.tp;
             });
             if (enemies.length < 1) {
                 this.target = null;
