@@ -56,6 +56,10 @@ Game.prototype.render = function() {
     // Level Geometry
     this.ctx.drawImage(this.levelCanvas, 0, 0);
 
+    // Hover Effect
+    this.renderHover(5, 4, true);
+    this.renderHover(5, 5, true);
+
     this.ctx.restore();
 
     // Canvases, Guns and Blobs
@@ -65,6 +69,14 @@ Game.prototype.render = function() {
     }
 };
 
+    Game.prototype.renderHover = function(tx, ty, colorOrValid) {
+        var color = colorOrValid;
+        if (typeof colorOrValid == "boolean") {
+            color = colorOrValid ? "rgba(0,255,0,0.3)" : "rgba(255,0,0,0.3)";
+        }
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(tx * TILE_SIZE, ty * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+    }
 
 Game.prototype.initializeControls = function() {
     document.body.addEventListener("keydown", this.handleKey.bind(this));
