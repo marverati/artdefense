@@ -182,7 +182,6 @@ Game.prototype.updateLogic = function() {
                     this.deck.drawCards(this.lives <= 2 ? 3 : this.lives <= 5 ? 2 : 1);
                 }
             }
-            this.renderSorter.remove(this.enemies[i]);
             this.enemies.splice(i, 1);
         }
     }

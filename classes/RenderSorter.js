@@ -30,6 +30,21 @@ RenderSorter.prototype.render = function(ctx, camera) {
 
     // Render
     for (i = 0; i < this.elements.length; i++) {
+        // Dead enemies
+        if (this.elements[i] instanceof Enemy) {
+            if (!this.elements[i].alive) {
+                var alpha = 1 - (game.tAbs - this.elements[i].deathTime) * 0.002;
+                if (alpha <= 0) {
+                    this.elements.splice(i, 1);
+                    i--;
+                    continue;
+                }
+                ctx.globalAlpha = alpha;
+                this.elements[i].render(ctx, camera);
+                ctx.globalAlpha = 1;
+                continue;
+            }
+        }
         this.elements[i].render(ctx, camera);
     }
 

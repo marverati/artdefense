@@ -14,9 +14,10 @@ function Enemy(tile, type, properties) {
     this.targetTile = tile;
     this.x = tile.x;
     this.y = tile.y;
-
+    
     this.alive = true;
     this.hp = 180;
+    this.deathTime = 0;
 
     this.rotationType = ROTATION.DEFAULT;
 
@@ -74,7 +75,7 @@ Enemy.prototype.update = function(dt, t) {
     var speed = this.speed;
     if (this.frozen) { speed *= 0.5; }
     if (this.poisoned) { speed *= 0.9; }
-    if (this.confused) { speed *= -1; }
+    if (this.confused) { speed *= -0.5; }
     this.targetProgress += dt * speed;
     // Check if target was reached
     if (this.targetProgress >= this.targetDistance) {
@@ -188,6 +189,7 @@ Enemy.prototype.damage = function(dmg) {
     this.hp -= dmg;
     if (this.hp <= 0) {
         this.alive = false;
+        this.deathTime = game.tAbs;
     }
 };
 
