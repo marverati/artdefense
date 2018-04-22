@@ -326,8 +326,8 @@ Game.prototype.handleKey = function(e) {
 };
 
 Game.prototype.handleKeyDown = function(e) {
-    var rl = (e.key == "ArrowRight" ? 1 : 0) - (e.key == "ArrowLeft" ? 1 : 0);
-    var ud = (e.key == "ArrowDown" ? 1 : 0) - (e.key == "ArrowUp" ? 1 : 0);
+    var rl = (e.key == "ArrowRight" || e.key == "d" ? 1 : 0) - (e.key == "ArrowLeft" || e.key == "a" ? 1 : 0);
+    var ud = (e.key == "ArrowDown" || e.key == "s" ? 1 : 0) - (e.key == "ArrowUp" || e.key == "w" ? 1 : 0);
     if (rl || ud) {
         if (rl) { this.movingCameraX = rl; }
         if (ud) { this.movingCameraY = ud; }
@@ -337,8 +337,8 @@ Game.prototype.handleKeyDown = function(e) {
 };
 
 Game.prototype.handleKeyUp = function(e) {
-    var rl = (e.key == "ArrowRight" ? 1 : 0) - (e.key == "ArrowLeft" ? 1 : 0);
-    var ud = (e.key == "ArrowDown" ? 1 : 0) - (e.key == "ArrowUp" ? 1 : 0);
+    var rl = (e.key == "ArrowRight" || e.key == "d" ? 1 : 0) - (e.key == "ArrowLeft" || e.key == "a" ? 1 : 0);
+    var ud = (e.key == "ArrowDown" || e.key == "s" ? 1 : 0) - (e.key == "ArrowUp" || e.key == "w" ? 1 : 0);
     if (rl || ud) {
         if (rl) { this.movingCameraX = 0; }
         if (ud) { this.movingCameraY = 0; }
