@@ -1,5 +1,12 @@
 
-function Enemy(tile, type) {
+const ROTATION = {
+    DEFAULT: 0,
+    SIDEWAYS: 1,
+    SPINNING: 2,
+    OSCILLATING: 3
+}
+
+function Enemy(tile, type, properties) {
     this.tile = tile;
     this.type = type;
     this.id = Enemy.count++;
@@ -12,19 +19,37 @@ function Enemy(tile, type) {
     this.maxHp = 180;
     this.hp = this.maxHp;
 
+    this.rotationType = ROTATION.DEFAULT;
+
     this.targetRotation = 0;
     this.rotation = game ? game.camera.rotation + Math.PI / 2 : 0;
     this.speed = 0.1;
     this.h = 15;
     this.width = 90;
     this.height = 120;
+
+    // Behaviour
+    this.confused = 0;
+    this.poisoned = 0;
+    this.frozen = 0;
+
+    if (properties) {
+        var keys = Object.keys(properties);
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            if (this[key] != null) {
+                this[key] = properties[key];
+            }
+        }
+    }
+
     this.canvas = document.createElement("canvas");
     this.canvas.width = this.width * 3;
     this.canvas.height = this.height * 3;
     this.ctx = this.canvas.getContext("2d");
     this.ctx.fillStyle = type.color;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-    this.moveOn();
+    this.moveOn(0);
 }
 
 Enemy.count = 0; 
@@ -33,10 +58,24 @@ Enemy.prototype.update = function(dt, t) {
     if (!this.alive) {
         return true;
     }
+    // States
+    if (this.frozen) { this.frozen = Math.max(0, this.frozen - 1); }
+    if (this.poisoned) { this.poisoned = Math.max(0, this.poisoned - 1); if (Math.random() < 0.2) { this.damage(1); } }
+    if (this.confused) { this.confused = Math.max(0, this.confused - 1); }
+    // Live rotation
+    if (this.rotationType == ROTATION.SPINNING) {
+        this.targetRotation = t * 0.001;
+    } else if (this.rotationType == ROTATION.OSCILLATING) {
+        this.targetRotation = this.originalTargetRotation + Math.PI * 0.2 * Math.sin(t * 0.003);
+    }
     // Float in air
     this.h = 12 + 10 * Math.sin(t * 0.003 + this.id);
     // Move towards target tile
-    this.targetProgress += dt * this.speed;
+    var speed = this.speed;
+    if (this.frozen) { speed *= 0.4; }
+    if (this.poisoned) { speed *= 0.8; }
+    if (this.confused) { speed *= -1; }
+    this.targetProgress += dt * speed;
     // Check if target was reached
     if (this.targetProgress >= this.targetDistance) {
         // Reached goal?
@@ -44,7 +83,7 @@ Enemy.prototype.update = function(dt, t) {
             return true;
         }
         // Reached target tile, move on to next one
-        this.moveOn();
+        this.moveOn(t);
     }
     // Update position
     var p = this.targetProgress / this.targetDistance;
@@ -55,16 +94,16 @@ Enemy.prototype.update = function(dt, t) {
     // Update rotation
     if (this.rotation != this.targetRotation) {
         if (this.rotation < this.targetRotation) {
-            this.rotation += dt * this.speed * 0.03;
+            this.rotation += dt * speed * 0.03;
             if (this.rotation >= this.targetRotation) { this.rotation = this.targetRotation; }
         } else {
-            this.rotation -= dt * this.speed * 0.03;
+            this.rotation -= dt * speed * 0.03;
             if (this.rotation <= this.targetRotation) { this.rotation = this.targetRotation; }
         }
     }
 };
 
-Enemy.prototype.moveOn = function() {
+Enemy.prototype.moveOn = function(t) {
     var tile = this.targetTile;
     this.startTile = this.tile = tile;
     this.targetTile = this.targetTile.getNextTile();
@@ -72,7 +111,11 @@ Enemy.prototype.moveOn = function() {
     this.targetDistance = Math.sqrt( dx * dx + dy * dy );
     this.targetProgress = 0;
     var oldTarget = this.targetRotation;
-    this.targetRotation = Math.atan2(dx, dy) + Math.PI / 2;
+    if (this.rotationType == ROTATION.DEFAULT || this.rotationType == ROTATION.OSCILLATING) {
+        this.targetRotation = Math.atan2(dx, dy) + Math.PI / 2;
+    } else if (this.rotationType == ROTATION.SIDEWAYS) {
+        this.targetRotation = Math.atan2(dx, dy);
+    }
     while (Math.abs(this.targetRotation - oldTarget) > Math.PI) {
         if (this.targetRotation > oldTarget) {
             this.targetRotation -= 2 * Math.PI;
@@ -80,6 +123,7 @@ Enemy.prototype.moveOn = function() {
             this.targetRotation += 2 * Math.PI;
         }
     }
+    this.originalTargetRotation = this.targetRotation;
     var rdis = (this.rotation - this.targetRotation) % (2 * Math.PI);
     if (Math.abs(rdis) < Math.PI) {
         this.rotation = this.targetRotation + rdis;

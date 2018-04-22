@@ -9,11 +9,11 @@ function createLevels(game) {
     createLevel(
         9, 9,
         7, 7,
-        new Spawn(1, 1).moveDown(3).moveRight(6).moveDown(3),
+        new Spawn(1, 1).moveDown(6).moveRight(3).moveUp(6).moveRight(3).moveDown(6),
         // new Spawn(1,1).moveDown(3).moveRight(3).moveUp(2).moveLeft(2).moveUp(2).moveRight(6).moveDown(3).moveLeft(2).moveDown(3).moveLeft(5).
         //moveDown(2).moveRight(1).moveUp(1).moveRight(2),
         [
-            new Wave(26, function (w) { return [8 * w, TYPE_BLANC]; }),
+            new Wave(26, function (w) { return [8 * w, TYPE_BLANC, {rotationType: ROTATION.OSCILLATING}]; }),
             new Wave(10, function (w) { return [5 * w, null]; })
         ]
     );

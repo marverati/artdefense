@@ -3,13 +3,17 @@
 var cardTypes = [];
 
 // Color guns
-for (var tp of [GUN_YELLOW, GUN_BLUE, GUN_GREEN, GUN_RED]) {
+for (var tp of [GUN_YELLOW, GUN_RED]) {
     addIt(tp);
     function addIt(tp) {
         addCardType(tp.name + " Tower", tp.image, "Create a new tower shooting " + tp.name.toLowerCase() + " paint.", INTERACT.SELECT_FREE_TILE, 
-            function(tile) { game.addGun(new Gun(game, tile, tp)); }, 5);
+            function(tile) { game.addGun(new Gun(game, tile, tp)); }, 4);
     }
 }
+addCardType("Ice Tower", GUN_BLUE.image, "Create a new tower shooting blue paint, which freezes enemies and slows them down.",
+        INTERACT.SELECT_FREE_TILE, function(tile) { game.addGun(new Gun(game, tile, GUN_BLUE)); }, 2);
+addCardType("Poison Tower", GUN_GREEN.image, "Create a new tower shooting green paint, which poisons enemies and deals damage over time.",
+        INTERACT.SELECT_FREE_TILE, function(tile) { game.addGun(new Gun(game, tile, GUN_GREEN)); }, 2);
 // Gain Lives
 addCardType("Extra Lives", null, "Gain 5 extra lives instantly.", INTERACT.NONE, function() {
     game.lives += 5;

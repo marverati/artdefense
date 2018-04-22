@@ -153,9 +153,9 @@ Level.prototype.update = function(dt, t) {
     }
 };
 
-Level.prototype.spawnUnit = function(tp) {
+Level.prototype.spawnUnit = function(tp, properties) {
     var tile = this.get(this.spawns[0].startX, this.spawns[0].startY);
-    var e = new Enemy(tile, tp);
+    var e = new Enemy(tile, tp, properties);
     this.game.enemies.push( e );
     this.game.renderSorter.add(e);
 };

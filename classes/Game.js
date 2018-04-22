@@ -46,10 +46,10 @@ Game.prototype.loadLevel = function(level) {
     this.bullets = [];
     this.enemies = [];
     this.guns = [ 
-        new Gun(this, this.level.get(4, 5), GUN_GREEN),
+        /* new Gun(this, this.level.get(4, 5), GUN_GREEN),
         new Gun(this, this.level.get(7, 3), GUN_YELLOW),
         new Gun(this, this.level.get(2, 5), GUN_BLUE),
-        new Gun(this, this.level.get(9, 4), GUN_RED)
+        // new Gun(this, this.level.get(9, 4), GUN_RED) */
     ];
     var self = this;
     this.guns.forEach(function(gun) { self.renderSorter.add(gun); });
@@ -138,7 +138,7 @@ Game.prototype.updateLogic = function() {
             }
             if (e) {
                 // Enemy was hit
-                if (e.alive == null && this.bullets[b].gun.lifeGenerator) {
+                if (e.alive == false && this.bullets[b].gun.lifeGenerator) {
                     this.lives++;
                 }
             }
@@ -154,6 +154,7 @@ Game.prototype.updateLogic = function() {
                 // When enemy is still alive while being destroyed, it reached the target; otherwise killed by bullet
                 e.alive = false;
                 this.lives--;
+                this.deck.drawCard();
             }
             this.renderSorter.remove(this.enemies[i]);
             this.enemies.splice(i, 1);
@@ -215,6 +216,7 @@ Game.prototype.initializeControls = function() {
     document.body.addEventListener("keydown", this.handleKey.bind(this));
     this.canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
     this.canvas.addEventListener("click", this.handleMouseClick.bind(this));
+    this.canvas.addEventListener("contextmenu", this.handleRightClick.bind(this));
 };
 
 Game.prototype.handleKey = function(e) {
@@ -254,11 +256,13 @@ Game.prototype.startSelection = function(filter, callback, cancelCallback) {
 };
 
 Game.prototype.cancelSelection = function() {
-    this.selecting = false;
-    this.selectionCancelCallback();
-    this.selectionFilter = null;
-    this.selectionCallback = null;
-    this.selectionCancelCallback = null;
+    if (this.selecting) {
+        this.selecting = false;
+        this.selectionCancelCallback();
+        this.selectionFilter = null;
+        this.selectionCallback = null;
+        this.selectionCancelCallback = null;
+    }
 };
 
 Game.prototype.updateSelection = function() {
@@ -293,7 +297,7 @@ Game.prototype.handleMouseClick = function(e) {
         return;
     }
     if (this.selecting) {
-        if (e.button == 0) {
+        if (e.button == 0 && this.mouseTile != null) {
             // Left click
             if (this.selectionPossible) {
                 this.selectionCallback(this.selectionTile);
@@ -308,6 +312,12 @@ Game.prototype.handleMouseClick = function(e) {
         }
     }
 };
+
+Game.prototype.handleRightClick = function(e) {
+    this.cancelSelection();
+    e.preventDefault();
+    e.stopPropagation();
+}
 
 Game.prototype.addGun = function(gun) {
     this.guns.push(gun);
