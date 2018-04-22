@@ -64,7 +64,7 @@ Game.prototype.loadLevel = function(level) {
 
     this.prepareDeck();
 
-    this.camera.setPos( this.level.w / 2 * TILE_SIZE, this.level.h / 2 * TILE_SIZE);
+    this.camera.setPos( this.level.w * 0.3 * TILE_SIZE, this.level.h / 2 * TILE_SIZE);
     this.render();
 };
 

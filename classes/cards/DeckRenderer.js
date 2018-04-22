@@ -17,17 +17,17 @@ DeckRenderer.prototype.render = function(ctx) {
     var drawn = this.deck.drawn;
     var count = drawn.length;
     var spacing = Math.min(200, 1000 / count);
-    var basey = this.canvas.height / 2 + 80;
+    var basey = this.canvas.height / 2 + 160;
     var basex = 180 - this.canvas.width / 2;
     for (var i = 0; i < count; i++) {
         var y = basey;
         if (this.activeCard == drawn[i]) {
-            y -= game.selecting ? 80 : 250;
+            y -= game.selecting ? 110 : 320;
         } else if (this.hoverCard == drawn[i]) {
-            y -= 80;
+            y -= 110;
         } else {
             if (this.activeCard != null) {
-                y += 80;
+                // y += 80;
             }
         }
         this.renderCard(ctx, drawn[i], basex + spacing * i, y, 0);
