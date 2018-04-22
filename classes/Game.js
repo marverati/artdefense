@@ -407,7 +407,7 @@ Game.prototype.updateSelection = function() {
 
 Game.prototype.handleMouseMove = function(e) {
     var mx = this.mouseX = (e.clientX - this.canvas.offsetLeft) * this.canvas.width / this.canvas.offsetWidth;
-    var my = this.mouseY = (e.clientY - this.canvas.offsetTop) * this.canvas.height / this.canvas.offsetHeight;
+    var my = this.mouseY = (e.clientY - this.canvas.offsetTop + window.scrollY) * this.canvas.height / this.canvas.offsetHeight;
     if (this.deckRenderer.handleMouseMove(mx - this.canvas.width / 2, my - this.canvas.height / 2)) {
         this.mouseTileX = this.mouseTileY = 0;
         this.mouseTile = null;
