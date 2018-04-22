@@ -10,6 +10,8 @@ function Game(canvas) {
     this.camera = new Camera();
     this.renderSorter = new RenderSorter();
     this.paused = false;
+    this.won = false;
+    this.lost = false;
 
     shadowImage = loader.loadImage("img/shadow.png");
 
@@ -80,7 +82,7 @@ Game.prototype.loadLevel = function(level) {
             return tp.name.indexOf(" Tower") >= 0 && tp.name.indexOf("Mystery") < 0;
         }, 3);
         this.deck.shuffleStack();
-        this.deck.drawCards(7 - this.deck.drawn.length);
+        this.deck.drawCards(5 - this.deck.drawn.length);
     };
 
 Game.prototype.update = function() {
@@ -138,8 +140,10 @@ Game.prototype.updateLogic = function() {
             }
             if (e) {
                 // Enemy was hit
-                if (e.alive == false && this.bullets[b].gun.lifeGenerator) {
-                    this.lives++;
+                if (e.alive == false) {
+                    if (this.bullets[b].gun.lifeGenerator) {
+                        this.lives++;
+                    }
                 }
             }
             this.bullets.splice(b, 1);
@@ -150,11 +154,23 @@ Game.prototype.updateLogic = function() {
     Game.prototype.handleFinishedEnemy = function(e) {
         var i = this.enemies.indexOf(e);
         if (i >= 0) {
+            this.level.handleEnemyDeath(e);
             if (e.alive) {
                 // When enemy is still alive while being destroyed, it reached the target; otherwise killed by bullet
                 e.alive = false;
                 this.lives--;
-                this.deck.drawCard();
+                if (this.lives <= 0) {
+                    // Lost the game
+                    this.lost = true;
+                    this.deck.handleDefeat();
+                    // Remove all guns
+                    for (var gun of this.guns) {
+                        this.renderSorter.remove(gun);
+                    }
+                    this.guns = [];
+                } else {
+                    this.deck.drawCards(this.lives <= 2 ? 3 : this.lives <= 5 ? 2 : 1);
+                }
             }
             this.renderSorter.remove(this.enemies[i]);
             this.enemies.splice(i, 1);
@@ -178,6 +194,18 @@ Game.prototype.render = function() {
     // Level Geometry
     this.ctx.drawImage(this.levelCanvas, 0, 0);
 
+    // Wave Progress
+    if (this.level.waveStarted && !this.won && !this.lost) {
+        var remaining = this.level.enemyCount - this.level.passedEnemies - this.enemies.length;
+        if (remaining > 0) {
+            this.ctx.fillStyle = "white";
+            this.ctx.font = "86px Calibri";
+            this.ctx.textAlign = "center";
+            this.ctx.fillText("" + remaining, this.level.spawns[0].startX * TILE_SIZE + 48, this.level.spawns[0].startY * TILE_SIZE + 80);
+            this.ctx.textAlign = "left";
+        }
+    }
+
     // Hover Effect
     if (this.selecting) {
         if (this.mouseTile != null) {
@@ -198,9 +226,39 @@ Game.prototype.render = function() {
     this.ctx.globalAlpha = 1;
 
     // Lives
-    this.ctx.fillStyle = "black";
-    this.ctx.font = "42px Calibri";
-    this.ctx.fillText("Lives: " + this.lives, -this.canvas.width / 2 + 20, -this.canvas.height / 2 + 50);
+    if (!this.lost) {
+        this.ctx.fillStyle = "black";
+        this.ctx.font = "42px Calibri";
+        this.ctx.fillText("Lives: " + this.lives, -this.canvas.width / 2 + 20, -this.canvas.height / 2 + 50);
+    }
+
+    // Start Wave
+    if (!this.level.waveStarted && !this.won && !this.lost) {
+        this.ctx.textAlign = "center";
+        this.ctx.font = "42px Calibri";
+        this.ctx.fillStyle = "#c0c0c0";
+        var y = -300 + 25 * Math.sin(0.001 * Date.now());
+        this.ctx.fillText("Press Enter when you're ready for wave " + (1 + this.level.currentWave) + " / " + this.level.waves.length, 0, y);
+    }
+
+    // Won
+    if (this.won && !this.lost) {
+        this.ctx.textAlign = "center";
+        this.ctx.font = "80px Calibri";
+        this.ctx.fillStyle = "#d4a030";
+        var y = -200 + 50 * Math.sin(0.001 * Date.now());
+        this.ctx.fillText("You did it \\o/  Thanks for playing!", 0, y);
+    }
+
+    // Lost
+    if (this.lost) {
+        this.ctx.textAlign = "center";
+        this.ctx.font = "80px Calibri";
+        this.ctx.fillStyle = "#600802";
+        var y = -200 + 50 * Math.sin(0.001 * Date.now() + Math.PI);
+        this.ctx.fillText("GAME OVER", 0, y);
+    }
+    this.ctx.textAlign = "left";
 };
 
     Game.prototype.renderHover = function(tx, ty, colorOrValid) {
@@ -229,6 +287,9 @@ Game.prototype.handleKey = function(e) {
     }
     if (e.key == "p") {
         this.paused = !this.paused;
+    }
+    if (e.key == "Enter") {
+        this.level.handleEnterKey(this.tAbs);
     }
 };
 

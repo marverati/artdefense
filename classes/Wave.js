@@ -10,10 +10,15 @@ function Wave(count, generator) {
 }
 
 Wave.prototype.update = function(t) {
+    t -= this.startTime;
     for (var unit of this.units) {
         if (!unit.spawned && t >= unit.time) {
             unit.spawned = true;
             this.level.spawnUnit(unit.type, unit.properties);
         }
     }
+};
+
+Wave.prototype.start = function(t) {
+    this.startTime = t + 2000;
 };

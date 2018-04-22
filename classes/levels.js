@@ -10,11 +10,12 @@ function createLevels(game) {
         9, 9,
         7, 7,
         new Spawn(1, 1).moveDown(6).moveRight(3).moveUp(6).moveRight(3).moveDown(6),
-        // new Spawn(1,1).moveDown(3).moveRight(3).moveUp(2).moveLeft(2).moveUp(2).moveRight(6).moveDown(3).moveLeft(2).moveDown(3).moveLeft(5).
-        //moveDown(2).moveRight(1).moveUp(1).moveRight(2),
         [
-            new Wave(26, function (w) { return [8 * w, TYPE_BLANC, {rotationType: ROTATION.OSCILLATING}]; }),
-            new Wave(10, function (w) { return [5 * w, null]; })
+            new Wave(3, function (w) { return [6 * w, TYPE_BLANC, {}]; }),
+            // new Wave(6, function (w) { return [4 * w, TYPE_BLANC]; }),
+            // new Wave(9, function(w) { return [2 * w, TYPE_BLANC, { maxHp: 100, rotationType: ROTATION.SPINNING }] }), 
+            // new Wave(8, function(w) { return [3.2 * w, w % 2 ? TYPE_BLANC : GUN_BLUE, { hp: 160, width: 140} ]}),
+            new Wave(12, function(w) { return [1.2 * w, GUN_RED, { hp: 65, rotationType: ROTATION.SIDEWAYS }]})
         ]
     );
     

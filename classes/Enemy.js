@@ -16,8 +16,7 @@ function Enemy(tile, type, properties) {
     this.y = tile.y;
 
     this.alive = true;
-    this.maxHp = 180;
-    this.hp = this.maxHp;
+    this.hp = 180;
 
     this.rotationType = ROTATION.DEFAULT;
 
@@ -42,6 +41,7 @@ function Enemy(tile, type, properties) {
             }
         }
     }
+    this.maxHp = this.hp;
 
     this.canvas = document.createElement("canvas");
     this.canvas.width = this.width * 3;
@@ -64,7 +64,7 @@ Enemy.prototype.update = function(dt, t) {
     if (this.confused) { this.confused = Math.max(0, this.confused - 1); }
     // Live rotation
     if (this.rotationType == ROTATION.SPINNING) {
-        this.targetRotation = t * 0.001;
+        this.targetRotation = t * 0.002;
     } else if (this.rotationType == ROTATION.OSCILLATING) {
         this.targetRotation = this.originalTargetRotation + Math.PI * 0.2 * Math.sin(t * 0.003);
     }
@@ -72,8 +72,8 @@ Enemy.prototype.update = function(dt, t) {
     this.h = 12 + 10 * Math.sin(t * 0.003 + this.id);
     // Move towards target tile
     var speed = this.speed;
-    if (this.frozen) { speed *= 0.4; }
-    if (this.poisoned) { speed *= 0.8; }
+    if (this.frozen) { speed *= 0.5; }
+    if (this.poisoned) { speed *= 0.9; }
     if (this.confused) { speed *= -1; }
     this.targetProgress += dt * speed;
     // Check if target was reached

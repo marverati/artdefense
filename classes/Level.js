@@ -79,8 +79,10 @@ function Level(game, w, h, trgx, trgy, spawns, waves) {
 
     // Waves
     this.currentWave = 0;
+    this.passedEnemies = 0;
+    this.enemyCount = 1;
     this.waves = waves;
-    this.waveStarted = true;
+    this.waveStarted = false;
     for (var wave of this.waves) {
         wave.level = this;
     }
@@ -158,4 +160,29 @@ Level.prototype.spawnUnit = function(tp, properties) {
     var e = new Enemy(tile, tp, properties);
     this.game.enemies.push( e );
     this.game.renderSorter.add(e);
+};
+
+Level.prototype.handleEnterKey = function(t) {
+    if (!this.waveStarted) {
+        this.waveStarted = true;
+        this.enemyCount = this.waves[this.currentWave].units.length;
+        this.waves[this.currentWave].start(t);
+    }
+};
+
+Level.prototype.handleWaveSuccess = function() {
+    this.currentWave++;
+    this.waveStarted = false;
+    this.passedEnemies = 0;
+    if (this.currentWave >= this.waves.length) {
+        this.game.won = true;
+    }
+    this.game.deck.drawCards(2);
+};
+
+Level.prototype.handleEnemyDeath = function(e) {
+    this.passedEnemies++;
+    if (this.passedEnemies >= this.enemyCount) {
+        this.handleWaveSuccess();
+    }
 };

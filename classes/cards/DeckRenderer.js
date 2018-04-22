@@ -25,6 +25,10 @@ DeckRenderer.prototype.render = function(ctx) {
             y -= game.selecting ? 80 : 250;
         } else if (this.hoverCard == drawn[i]) {
             y -= 80;
+        } else {
+            if (this.activeCard != null) {
+                y += 80;
+            }
         }
         this.renderCard(ctx, drawn[i], basex + spacing * i, y, 0);
     }
@@ -49,6 +53,7 @@ DeckRenderer.prototype.handleMouseClick = function() {
         if (this.hoverCard == this.activeCard) {
             // Play card
             this.activeCard.select();
+            this.activeCard = null;
         } else {
             // Select other card
             this.activeCard = this.hoverCard;
