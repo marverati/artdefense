@@ -27,7 +27,15 @@
         <canvas id="gameCanvas" width=1600 height=1000></canvas>
         <div id="gallery"></div>
         <div id="help">
-<h1>How to Play</h1>
+<h1>Controls</h1>
+<ul>
+    <li>Mouse to click stuff (that's pretty much it actually)</li>
+    <li>Arrow keys or WASD to move view</li>
+    <li>P to pause game</li>
+    <li>If you're the impatient kind, 1, 2, 3 to vary game speed</li>
+</ul>
+
+<h1>About the Game</h1>
 <p>This is Art Defense. The game where Tower Defense and Painting come together.</p>
 <p>Your goal is to prevent the evil army of floating canvases from reaching the blue tile. Because reasons. 
 To do that, you must <b>build towers</b> (or rather.. blobs? Because art style!), which will shoot color at the canvases.
@@ -38,23 +46,22 @@ This not only makes the canvases beautiful, it also kills them, saving your valu
 <p>To build and upgrade stuff, you have to use your hand cards, which you see at the bottom of the game screen. Click once to
 read, click a second time to use it. For towers and upgrades you then have to place it on the map.
 </p>
-<h1>Controls</h1>
-<ul>
-    <li>Mouse to click stuff (that's pretty much it actually)</li>
-    <li>Arrow keys or WASD to move view</li>
-    <li>P to pause game</li>
-    <li>If you're the impatient kind, 1, 2, 3 to vary game speed</li>
-</ul>
+
 <p>Finally, a few tips and fun facts in case you struggle with beating the game: 
     <ul>
-        <li>There is only one level, consisting of 12 waves</li>
-        <li>You can build and upgrade stuff whenever you like, not just between waves</li>
+        <li>There is only this one level, consisting of 12 waves</li>
+        <li>You can build and upgrade stuff using your hand cards whenever you like, not just between waves</li>
+        <li>You draw new cards after each wave, and every time you lose a life</li>
         <li>Towers can usually only be upgraded once</li>
         <li>To apply more upgrades to one tower, you need special <i>More Upgrades</i> cards</li>
         <li>Upgrading a single tower multiple times is considered <i>good practice</i> among Art Defense veterans</li>
+        <li>Every time an enemy reaches the target and causes you to lose a life (and sometimes more than one), you automatically draw
+            a card (and when you really need them, even two or three). So even if a bunch of them makes it past your defense, with every
+            single one there will be a chance to react. Pausing the game (P) might be helpful at times.
+        </li>
         <li>If nothing works, feel free to cheat by typing <i>game.deck.drawCard()</i> or <i>game.lives++</i> into your browser console. In doing
             so however, you agree to telling all your friends about how amazing Art Defense is.</li>
-        <li>Above this text there's a fancy gallery of all the paintings that made it through. So if you're losing, at least it comes with
+        <li>Above this text there is (or will be) a fancy gallery of all the paintings that made it through. So if you're losing, at least it comes with
             the opportunity to enjoy the art a little longer. Feel free to rightclick and save them or something. Print them and decorate your wall. No?</li>
     </ul>
 </p>
@@ -63,6 +70,19 @@ read, click a second time to use it. For towers and upgrades you then have to pl
     I also want to apologize for the art generated in this game being rather lame. I spent about 4 hours on Saturday trying to
     find a way to physically simulate the effect color blobs have on a canvas when colliding at an angle, and was roughly one 
     math PhD away from figuring it out.
+</p>
+
+<h1>Technologies and Tools</h1>
+    <p>
+    <ul>
+        <li>JavaScript, HTML5, CSS</li>
+        <li>VisualStudio Code</li>
+        <li>Abundant-Music for the soundtrack</li>
+        <li>BFXR for the sound effects</li>
+        <li>Numerous self written tools for all the rest</li>
+        <li>No libraries were used, the game is rendered using the standard Canvas API;
+            all the code was written from scratch within 48 hours for Ludum Dare 41.</li>
+    </ul>
 </p>
         </div>
 
