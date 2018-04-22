@@ -163,6 +163,7 @@ Game.prototype.updateLogic = function() {
                 // When enemy is still alive while being destroyed, it reached the target; otherwise killed by bullet
                 e.alive = false;
                 this.lives--;
+                document.getElementById("gallery").appendChild(e.canvas);
                 if (this.lives <= 0) {
                     // Lost the game
                     this.lost = true;

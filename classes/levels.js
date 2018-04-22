@@ -7,12 +7,12 @@ var levels = [];
 function createLevels(game) {
 
     createLevel(
-        22, 17,
+        23, 17,
         2, 13,
-        new Spawn(2, 2).moveDown(8).moveRight(6).moveUp(4).moveLeft(3).moveUp(4).
+        new Spawn(2, 2).moveDown(8).moveRight(7).moveUp(4).moveLeft(3).moveUp(4).
         moveRight(10).moveDown(4).moveLeft(3).moveDown(4).moveRight(4).moveUp(3).
         moveRight(3).moveDown(6).moveLeft(6).moveUp(1).moveLeft(2).moveDown(2).moveLeft(2).
-        moveUp(2).moveLeft(2).moveDown(1).moveLeft(4),
+        moveUp(2).moveLeft(2).moveDown(1).moveLeft(5),
         [
             /* new Wave(3, function (w) { return [6 * w, TYPE_BLANC, {}]; }),
             new Wave(6, function (w) { return [4 * w, TYPE_BLANC]; }),

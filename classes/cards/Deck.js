@@ -80,3 +80,7 @@ Deck.prototype.resetStack = function() {
         card.used = false;
     });
 };  
+
+Deck.prototype.handleDefeat = function() {
+    this.resetStack();
+};
