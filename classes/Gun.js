@@ -4,10 +4,10 @@ Gun.splashImage = loader.loadImage("img/splash.png");
 Gun.upgradeImage = loader.loadImage("img/upgrade.png");
 Gun.upgradeSlotImage = loader.loadImage("img/upgradeSlot.png");
 
-var GUN_YELLOW = new GunType("Yellow", "#ffd820", 3, 250, 350, 1, 0.3, 0.5);
+var GUN_YELLOW = new GunType("Yellow", "#ffd820", 3, 250, 270, 1, 0.3, 0.5);
 var GUN_GREEN = new GunType("Green", "#30c010", 5, 800, 300, 0.62, 0.8, 0.5);
-var GUN_BLUE = new GunType("Blue", "blue", 6, 1200, 520, 0.75, 1, 1);
-var GUN_RED = new GunType("Red", "red", 12, 1000, 420, 0.85, 0.75, 1);
+var GUN_BLUE = new GunType("Blue", "blue", 6, 1200, 420, 0.75, 1, 1);
+var GUN_RED = new GunType("Red", "red", 12, 1000, 380, 0.85, 0.75, 1);
 
 var TYPE_BLANC = new GunType("Blanc", "#eee");
 

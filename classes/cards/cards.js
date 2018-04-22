@@ -7,13 +7,13 @@ for (var tp of [GUN_YELLOW, GUN_RED]) {
     addIt(tp);
     function addIt(tp) {
         addCardType(tp.name + " Tower", tp.image, "Create a new tower shooting " + tp.name.toLowerCase() + " paint.", INTERACT.SELECT_FREE_TILE, 
-            function(tile) { game.addGun(new Gun(game, tile, tp)); }, 4);
+            function(tile) { game.addGun(new Gun(game, tile, tp)); }, 4, null, tp.range);
     }
 }
 addCardType("Ice Tower", GUN_BLUE.image, "Create a new tower shooting blue paint, which freezes enemies and slows them down.",
-        INTERACT.SELECT_FREE_TILE, function(tile) { game.addGun(new Gun(game, tile, GUN_BLUE)); }, 2);
+        INTERACT.SELECT_FREE_TILE, function(tile) { game.addGun(new Gun(game, tile, GUN_BLUE)); }, 2, null, GUN_BLUE.range);
 addCardType("Poison Tower", GUN_GREEN.image, "Create a new tower shooting green paint, which poisons enemies and deals damage over time.",
-        INTERACT.SELECT_FREE_TILE, function(tile) { game.addGun(new Gun(game, tile, GUN_GREEN)); }, 2);
+        INTERACT.SELECT_FREE_TILE, function(tile) { game.addGun(new Gun(game, tile, GUN_GREEN)); }, 2, null, GUN_GREEN.range);
 // Gain Lives
 addCardType("Extra Lives", null, "Gain 5 extra lives instantly.", INTERACT.NONE, function() {
     game.lives += 5;
@@ -78,7 +78,7 @@ function addUpgrade(name, img, desc, execute, countInDeck) {
     });
 }
 
-function addCardType(name, img, desc, interact, execute, countInDeck, filter) {
-    var tp = new CardType(name, img, desc, interact, execute, filter, countInDeck);
+function addCardType(name, img, desc, interact, execute, countInDeck, filter, displayRange) {
+    var tp = new CardType(name, img, desc, interact, execute, filter, countInDeck, displayRange);
     cardTypes.push(tp);
 }

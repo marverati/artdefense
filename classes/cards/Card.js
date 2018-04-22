@@ -6,7 +6,7 @@ const INTERACT = {
     SELECT_FREE_TILE: 3,
 }
 
-function CardType(name, image, description, interactionType, executor, filter, count) {
+function CardType(name, image, description, interactionType, executor, filter, count, displayRange) {
     this.name = name;
     this.image = image;
     this.description = Card.wrapText(description);
@@ -14,6 +14,7 @@ function CardType(name, image, description, interactionType, executor, filter, c
     this.executor = executor;
     this.filter = filter;
     this.count = count;
+    this.displayRange = displayRange;
 }
 
 function Card(tp) {
@@ -74,7 +75,7 @@ Card.prototype.select = function() {
             self.use(tile);
         }, function() {
             // Cancelled
-        });
+        }, this.type.displayRange);
     }
 };
 

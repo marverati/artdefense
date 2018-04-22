@@ -19,6 +19,7 @@ function Game(canvas) {
     this.selectionFilter = null;
     this.selectionCallback = null;
     this.selectionCancelCallback = null;
+    this.selectionRange = null;
 
     this.initializeDeck();
     
@@ -216,6 +217,16 @@ Game.prototype.render = function() {
         }
     }
 
+    // Range
+    if (this.selecting && this.selectionRange) {
+        this.ctx.strokeStyle = "#30ff30";
+        this.ctx.lineWidth = 3;
+        this.ctx.beginPath();
+        this.ctx.arc((this.mouseTileX + 0.5) * TILE_SIZE, (this.mouseTileY + 0.5) * TILE_SIZE, this.selectionRange, 0, 6.29);
+        this.ctx.closePath();
+        this.ctx.stroke();
+    }
+
     this.ctx.restore();
 
     // Canvases, Guns and Bullets
@@ -309,7 +320,7 @@ function drawShadow(ctx, x, y, scale, fade) {
     }
 }
 
-Game.prototype.startSelection = function(filter, callback, cancelCallback) {
+Game.prototype.startSelection = function(filter, callback, cancelCallback, displayRange) {
     if (this.selecting) {
         this.cancelSelection();
     }
@@ -317,6 +328,7 @@ Game.prototype.startSelection = function(filter, callback, cancelCallback) {
     this.selectionFilter = filter || function(tile) { return tile != null; };
     this.selectionCallback = callback || function(tile) {};
     this.selectionCancelCallback = cancelCallback || function() {};
+    this.selectionRange = displayRange;
 };
 
 Game.prototype.cancelSelection = function() {

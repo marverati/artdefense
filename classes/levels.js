@@ -14,11 +14,13 @@ function createLevels(game) {
         moveRight(3).moveDown(6).moveLeft(6).moveUp(1).moveLeft(2).moveDown(2).moveLeft(2).
         moveUp(2).moveLeft(2).moveDown(1).moveLeft(4),
         [
-            new Wave(3, function (w) { return [6 * w, TYPE_BLANC, {}]; }),
+            /* new Wave(3, function (w) { return [6 * w, TYPE_BLANC, {}]; }),
             new Wave(6, function (w) { return [4 * w, TYPE_BLANC]; }),
             new Wave(9, function(w) { return [2 * w, TYPE_BLANC, { maxHp: 100, rotationType: ROTATION.SPINNING }] }), 
             new Wave(8, function(w) { return [3.2 * w, w % 2 ? TYPE_BLANC : GUN_BLUE, { hp: 160, width: 140} ]}),
-            new Wave(12, function(w) { return [1.2 * w, GUN_RED, { hp: 65, rotationType: ROTATION.SIDEWAYS }]})
+            new Wave(12, function(w) { return [1.2 * w, GUN_RED, { hp: 65, rotationType: ROTATION.SIDEWAYS }]}), */
+            //new Wave(6, function(w) { return [5 * w, w % 2 ? GUN_BLUE : GUN_GREEN, { speed: 0.25, hp: 170 }]}), 
+            new Wave(10, function(w) { return [4 * w + 2 * (w % 2), GUN_YELLOW, { hp: 300 }]})
         ]
     );
 
