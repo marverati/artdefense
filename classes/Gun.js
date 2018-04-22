@@ -173,11 +173,9 @@ Gun.prototype.update = function(dt, t) {
     }
 
 Gun.getTarget = function(x, y, range, excludeType, excludeEnemy) {
-    console.log(range);
     var range2 = range * range;
     var enemies = game.enemies.filter(function(e) {
         var dx = e.x - x, dy = e.y - y;
-        console.log(dx, dy);
         return e.type != excludeType && dx * dx + dy * dy <= range2 && e != excludeEnemy;
     });
     if (enemies.length < 1) {

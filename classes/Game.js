@@ -167,6 +167,8 @@ Game.prototype.updateLogic = function() {
             if (e.alive) {
                 // When enemy is still alive while being destroyed, it reached the target; otherwise killed by bullet
                 e.alive = false;
+                e.deathHeight = e.h;
+                e.deathTime = this.tAbs;
                 this.lives--;
                 document.getElementById("gallery").appendChild(e.canvas);
                 if (this.lives <= 0) {
@@ -356,7 +358,7 @@ Game.prototype.updateCameraMovement = function(dt) {
 
 
 function drawShadow(ctx, x, y, scale, fade) {
-    if (shadowImage) {
+    if (shadowImage && scale > 0 && (fade == null || fade > 0)) {
         ctx.save();
         ctx.translate(x, y);
         if (fade != null) { ctx.globalAlpha *= fade; }

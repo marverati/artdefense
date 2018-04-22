@@ -143,7 +143,7 @@ Enemy.prototype.render = function(ctx, camera) {
     var sin = Math.sin(rotation), cos = Math.cos(rotation);
     ctx.transform(cos, sin * camera.yScale, 0, 1, 0, 0);
     // Shadow beneath
-    drawShadow(ctx, 0, this.h, 0.6);
+    drawShadow(ctx, 0, this.h, 0.6 + this.h/1200, 1 - this.h / 2000);
     // Actual image
     var x1 = -this.width / 2, y1 = -this.height;
     ctx.drawImage(this.canvas, x1, y1, this.width, this.height);

@@ -33,13 +33,16 @@ RenderSorter.prototype.render = function(ctx, camera) {
         // Dead enemies
         if (this.elements[i] instanceof Enemy) {
             if (!this.elements[i].alive) {
-                var alpha = 1 - (game.tAbs - this.elements[i].deathTime) * 0.002;
-                if (alpha <= 0) {
-                    this.elements.splice(i, 1);
-                    i--;
-                    continue;
+                if (this.elements[i].hp <= 0) {
+                    // Killed
+                    var alpha = 1 - (game.tAbs - this.elements[i].deathTime) * 0.002;
+                    if (alpha <= 0) { this.elements.splice(i, 1); i--; continue; }
+                    ctx.globalAlpha = alpha;
+                } else {
+                    // Reached target
+                    this.elements[i].h = this.elements[i].deathHeight + Math.pow((game.tAbs - this.elements[i].deathTime) / 50, 2);
+                    if (this.elements[i].h > 10000) { this.elements.splice(i, 1); i--; continue; }
                 }
-                ctx.globalAlpha = alpha;
                 this.elements[i].render(ctx, camera);
                 ctx.globalAlpha = 1;
                 continue;
