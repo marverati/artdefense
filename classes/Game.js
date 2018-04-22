@@ -21,6 +21,9 @@ function Game(canvas) {
     this.selectionCancelCallback = null;
     this.selectionRange = null;
 
+    this.movingCameraX = 0;
+    this.movingCameraY = 0;
+
     this.initializeDeck();
     
     this.lives = 10;
@@ -45,6 +48,8 @@ Game.prototype.loadLevel = function(level) {
     this.groundCanvas.width = this.levelCanvas.width;
     this.groundCanvas.height = this.levelCanvas.height;
     this.groundContext = this.groundCanvas.getContext("2d");
+    this.groundContext.fillStyle = "white";
+    this.groundContext.fillRect(0, 0, 9999, 9999);
 
     this.bullets = [];
     this.enemies = [];
@@ -100,7 +105,7 @@ Game.prototype.update = function() {
 };
 
 Game.prototype.updateControls = function() {
-
+    this.updateCameraMovement(1);
 };
 
 Game.prototype.updateLogic = function() {
@@ -185,7 +190,7 @@ Game.prototype.updateLogic = function() {
 Game.prototype.render = function() {
     // Clear
     this.ctx.setTransform(1, 0, 0, 1, 0, 0);
-    this.ctx.fillStyle = "white";
+    this.ctx.fillStyle = "#999";
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Isometry
@@ -300,24 +305,53 @@ Game.prototype.render = function() {
 
 Game.prototype.initializeControls = function() {
     document.body.addEventListener("keydown", this.handleKey.bind(this));
+    document.body.addEventListener("keyup", this.handleKeyUp.bind(this));
     this.canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
     this.canvas.addEventListener("click", this.handleMouseClick.bind(this));
     this.canvas.addEventListener("contextmenu", this.handleRightClick.bind(this));
 };
 
 Game.prototype.handleKey = function(e) {
-    var rl = (e.key == "ArrowRight" ? 1 : 0) - (e.key == "ArrowLeft" ? 1 : 0);
-    var ud = (e.key == "ArrowDown" ? 1 : 0) - (e.key == "ArrowUp" ? 1 : 0);
-    if (rl || ud) {
-        var dx = 32 * (ud * this.camera.sin + rl * this.camera.cos);
-        var dy = 32 * (ud * this.camera.cos - rl * this.camera.sin);
-        this.camera.move(dx, dy);
-    }
     if (e.key == "p") {
         this.paused = !this.paused;
     }
     if (e.key == "Enter") {
         this.level.handleEnterKey(this.tAbs);
+    }
+    if (e.key == "1") { this.gameSpeed = 1; }
+    if (e.key == "2") { this.gameSpeed = 2.5; }
+    if (e.key == "3") { this.gameSpeed = 4; }
+    this.handleKeyDown(e);
+};
+
+Game.prototype.handleKeyDown = function(e) {
+    var rl = (e.key == "ArrowRight" ? 1 : 0) - (e.key == "ArrowLeft" ? 1 : 0);
+    var ud = (e.key == "ArrowDown" ? 1 : 0) - (e.key == "ArrowUp" ? 1 : 0);
+    if (rl || ud) {
+        if (rl) { this.movingCameraX = rl; }
+        if (ud) { this.movingCameraY = ud; }
+        e.preventDefault();
+        e.stopPropagation();
+    }
+};
+
+Game.prototype.handleKeyUp = function(e) {
+    var rl = (e.key == "ArrowRight" ? 1 : 0) - (e.key == "ArrowLeft" ? 1 : 0);
+    var ud = (e.key == "ArrowDown" ? 1 : 0) - (e.key == "ArrowUp" ? 1 : 0);
+    if (rl || ud) {
+        if (rl) { this.movingCameraX = 0; }
+        if (ud) { this.movingCameraY = 0; }
+        e.preventDefault();
+        e.stopPropagation();
+    }
+};
+
+Game.prototype.updateCameraMovement = function(dt) {
+    if (this.movingCameraX || this.movingCameraY) {
+        var dx = dt * 16 * (this.movingCameraY * this.camera.sin * 1.5 + this.movingCameraX * this.camera.cos);
+        var dy = dt * 16 * (this.movingCameraY * this.camera.cos * 1.5 - this.movingCameraX * this.camera.sin);
+        this.camera.move(dx, dy);
+        this.camera.contain(0, 0, this.level.canvas.width, this.level.canvas.height);
     }
 };
 

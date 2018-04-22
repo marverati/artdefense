@@ -57,3 +57,8 @@ Camera.prototype.detransform = function(canvas, mx, my) {
     wy += this.y;
     return [wx, wy];
 };
+
+Camera.prototype.contain = function(x1, y1, x2, y2) {
+    this.x = Math.min(x2, Math.max(x1, this.x));
+    this.y = Math.min(y2, Math.max(y1, this.y));
+};
