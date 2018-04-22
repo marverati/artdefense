@@ -28,7 +28,9 @@ Bullet.prototype.update = function(dt, t) {
         if (this.ignoreEnemy == e) { continue; }
         var point = e.collidesWith(this.x, this.y, this.h, 10)
         if (point) {
-            e.damage(this.gun.damage);
+            if (e.type != this.gun.tp) {
+                e.damage(this.gun.damage);
+            }
             this.hitEnemy = e;
             // Enemy state
             if (this.gun.tp == GUN_GREEN) {
@@ -37,7 +39,7 @@ Bullet.prototype.update = function(dt, t) {
                 e.frozen = Math.max(e.frozen, 150);
             } else if (this.gun.confusion) {
                 if (Math.random() < 0.1) {
-                    e.confused = Math.max(e.confused, 200);
+                    e.confused = Math.max(e.confused, 30 + Math.random() * 50);
                 }
             }
             // Blob dynamics

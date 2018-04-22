@@ -2,16 +2,16 @@
 
 var quotes = [
     "All is fair in art and war.",
-    "Where there's Art, there is Violence.",
-    "The good artists paints. The great artist uses the force.",
     "Paintings are the window to the soul.",
+    "Where there's paint, there's life",
+    "The good artists paints. The great artist uses the force.",
     "Put a Smile on that Canvas",
     "When the color is right, the art is tight.",
     "Paint it. Print it. Put in on the wall.",
+    "Where there's Art, there is Violence.",
     "Raiders of the lost Art",
     "Paint today, and reap the rewards for a lifetime",
     "Quotes too are a form of art",
-    "Where there's paint, there's life",
     "The grande finale"
 ];
 
@@ -32,7 +32,7 @@ function drawQuote(ctx, id, x, y) {
         if (tdif > tmax - fadeTime) { alpha = (tmax - tdif) / fadeTime; }
         if (alpha > 0) {
             ctx.globalAlpha = alpha;
-            ctx.fillStyle = "#666";
+            ctx.fillStyle = "#222";
             ctx.fillText("Act " + (id + 1), x, y - TILE_SIZE);
             ctx.fillText(quotes[id], x, y);
             ctx.globalAlpha = 1;

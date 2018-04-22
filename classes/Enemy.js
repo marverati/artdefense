@@ -18,6 +18,8 @@ function Enemy(tile, type, properties) {
     this.alive = true;
     this.hp = 180;
     this.deathTime = 0;
+    this.lives = 1; // how many lives they steal when they reach the target
+    this.immune = false;
 
     this.rotationType = ROTATION.DEFAULT;
 
@@ -51,6 +53,8 @@ function Enemy(tile, type, properties) {
     this.ctx.fillStyle = type.color;
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     this.moveOn(0);
+
+    playSound("enemy_spawn");
 }
 
 Enemy.count = 0; 
@@ -73,9 +77,11 @@ Enemy.prototype.update = function(dt, t) {
     this.h = 12 + 10 * Math.sin(t * 0.003 + this.id);
     // Move towards target tile
     var speed = this.speed;
-    if (this.frozen) { speed *= 0.5; }
-    if (this.poisoned) { speed *= 0.9; }
-    if (this.confused) { speed *= -0.5; }
+    if (!this.immune) {
+        if (this.frozen) { speed *= 0.5; }
+        if (this.poisoned) { speed *= 0.9; }
+        if (this.confused) { speed *= -0.5; }
+    }
     this.targetProgress += dt * speed;
     // Check if target was reached
     if (this.targetProgress >= this.targetDistance) {
@@ -162,11 +168,12 @@ Enemy.prototype.render = function(ctx, camera) {
 
     // Health bar
     if (this.hp <= this.maxHp) {
-        drawHealthbar(ctx, x, y - 140, this.hp / this.maxHp);
+        drawHealthbar(ctx, x, y - this.height - 20, this.hp / this.maxHp);
     }
 };
 
 function drawHealthbar(ctx, x, y, p) {
+    if (p < 0) { return; }
     var w = 80, h = 4;
     var x1 = x - w / 2, y1 = y;
     var x2 = x1 + w, y2 = y1 + h;
@@ -190,6 +197,7 @@ Enemy.prototype.damage = function(dmg) {
     if (this.hp <= 0) {
         this.alive = false;
         this.deathTime = game.tAbs;
+        playSound("enemy_dead");
     }
 };
 

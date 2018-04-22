@@ -19,3 +19,17 @@ setTimeout(function() {
 function rnd() {
     return Math.random() - Math.random();
 }
+
+var audioMap = {};
+
+function playSound(name) {
+    var audio = audioMap[name];
+    if (audio == null) {
+        audio = document.getElementById(name);
+        audioMap[name] = audio;
+    }
+    if (audio) {
+        audio.currentTime = 0;
+        audio.play();
+    }
+}

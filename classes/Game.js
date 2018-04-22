@@ -87,9 +87,6 @@ Game.prototype.loadLevel = function(level) {
         this.deck.drawSpecificCards(function(tp) {
             return tp.name.indexOf(" Tower") >= 0 && tp.name.indexOf("Mystery") < 0;
         }, 3);
-        this.deck.drawSpecificCards(function(tp) {
-            return tp.name.indexOf("Jump") >= 0;
-        });
         this.deck.shuffleStack();
         this.deck.drawCards(5 - this.deck.drawn.length);
     };
@@ -169,9 +166,11 @@ Game.prototype.updateLogic = function() {
                 e.alive = false;
                 e.deathHeight = e.h;
                 e.deathTime = this.tAbs;
-                this.lives--;
+                this.lives -= e.lives;
+                playSound("enemy_succeeded");
                 document.getElementById("gallery").appendChild(e.canvas);
                 if (this.lives <= 0) {
+                    this.lives = 0;
                     // Lost the game
                     this.lost = true;
                     this.deck.handleDefeat();
@@ -200,7 +199,9 @@ Game.prototype.render = function() {
     this.camera.applyTransform(this.ctx);
 
     // Level Paint
+    this.ctx.globalAlpha = 1 - 0.4 * this.level.currentWave / 12;
     this.ctx.drawImage(this.groundCanvas, 0, 0);
+    this.ctx.globalAlpha = 1;
 
     // Level Geometry
     this.ctx.drawImage(this.levelCanvas, 0, 0);
@@ -276,7 +277,7 @@ Game.prototype.render = function() {
     if (!this.level.waveStarted && !this.won && !this.lost) {
         this.ctx.textAlign = "center";
         this.ctx.font = "42px Calibri";
-        this.ctx.fillStyle = "#c0c0c0";
+        this.ctx.fillStyle = "#6060a0";
         var y = -300 + 25 * Math.sin(0.001 * Date.now());
         this.ctx.fillText("Press Enter when you're ready for wave " + (1 + this.level.currentWave) + " / " + this.level.waves.length, 0, y);
     }

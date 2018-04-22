@@ -20,5 +20,5 @@ Wave.prototype.update = function(t) {
 };
 
 Wave.prototype.start = function(t) {
-    this.startTime = t + 2000;
+    this.startTime = t + 5000;
 };

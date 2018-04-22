@@ -74,6 +74,8 @@ function Gun(game, tile, type) {
     this.lifeGenerator = false;
     this.upgradeSlots = 1;
     this.upgrades = 0;
+
+    playSound("towerup");
 }
 
 Gun.prototype.render = function(ctx, camera) {

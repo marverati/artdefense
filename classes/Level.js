@@ -177,7 +177,7 @@ Level.prototype.handleWaveSuccess = function() {
     if (this.currentWave >= this.waves.length) {
         this.game.won = true;
     }
-    this.game.deck.drawCards(2);
+    this.game.deck.drawCards(2 + (this.currentWave == this.waves.length ? 3 : 0));
 };
 
 Level.prototype.handleEnemyDeath = function(e) {

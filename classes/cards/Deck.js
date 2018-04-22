@@ -65,8 +65,12 @@ Deck.prototype.registerUse = function(card) {
 };
 
 Deck.prototype.drawCards = function(count) {
+    var self = this;
     for (var i = 0; i < count; i++) {
-        setTimeout(this.drawCard.bind(this), 400 * i);
+        setTimeout(function() {
+            self.drawCard();
+            playSound("draw_card");
+        }, 400 * i);
     }
 };
 

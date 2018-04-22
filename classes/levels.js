@@ -14,13 +14,23 @@ function createLevels(game) {
         moveRight(3).moveDown(6).moveLeft(6).moveUp(1).moveLeft(2).moveDown(2).moveLeft(2).
         moveUp(2).moveLeft(2).moveDown(1).moveLeft(5),
         [
-            // new Wave(3, function (w) { return [6 * w, TYPE_BLANC, {}]; }),
-            new Wave(6, function (w) { return [4 * w, TYPE_BLANC]; }),
-            new Wave(9, function(w) { return [2 * w, TYPE_BLANC, { maxHp: 100, rotationType: ROTATION.SPINNING }] }), 
-            new Wave(8, function(w) { return [3.2 * w, w % 2 ? TYPE_BLANC : GUN_BLUE, { hp: 160, width: 140} ]}),
-            new Wave(12, function(w) { return [1.2 * w, GUN_RED, { hp: 65, rotationType: ROTATION.SIDEWAYS }]}),
-            //new Wave(6, function(w) { return [5 * w, w % 2 ? GUN_BLUE : GUN_GREEN, { speed: 0.25, hp: 170 }]}), 
-            new Wave(10, function(w) { return [4 * w + 2 * (w % 2), GUN_YELLOW, { hp: 300 }]})
+            new Wave(3, function (w) { return [6 * w, TYPE_BLANC, { hp: 80 }]; }),
+            new Wave(6, function (w) { return [4 * w, TYPE_BLANC, { hp: 120 }]; }),
+            new Wave(9, function(w) { return [2 * w, TYPE_BLANC, { hp: 120, rotationType: ROTATION.SPINNING }] }), 
+            new Wave(8, function(w) { return [3.2 * w, w % 2 ? TYPE_BLANC : GUN_BLUE, { hp: 190, width: 140} ]}),
+            new Wave(12, function(w) { return [1.2 * w, GUN_RED, { hp: 85, rotationType: ROTATION.SIDEWAYS }]}),
+            new Wave(6, function(w) { return [5 * w, w % 2 ? GUN_BLUE : GUN_GREEN, { speed: 0.25, hp: 200 }]}), 
+            new Wave(10, function(w) { return [4 * w - 3 * (w % 2), GUN_YELLOW, { hp: 360 }]}),
+            new Wave(32, function(w) { return [2 * w, TYPE_BLANC, { hp: 105, height: 70, speed: 0.18, rotationType: w % 2 ? ROTATION.DEFAULT : ROTATION.SIDEWAYS }]}),
+            new Wave(2, function(w) { return [8 * w, GUN_RED, { hp: 1600, rotationType: ROTATION.OSCILLATING, speed: 0.12, lives: 3 }]}),
+            new Wave(12, function(w) { return [0.5 * w, GUN_BLUE, { hp: 240, width: 120, height: 60}]}),
+            new Wave(24, function(w) { return [
+                3 * w + Math.random() * 2,
+                [GUN_BLUE, GUN_RED, GUN_YELLOW, GUN_GREEN, TYPE_BLANC][Math.floor(Math.random() * 5)],
+                { hp: 400, width: 80 + 20 * rnd(), height: 80 + 20 * rnd(), 
+                    rotationType: Math.floor(Math.random() * 4) }
+            ]}),
+            new Wave(1, function(w) { return [w, TYPE_BLANC, { hp: 4000, speed: 0.08, width: 160, height: 220, lives: 5, immune: true }]})
         ]
     );
 

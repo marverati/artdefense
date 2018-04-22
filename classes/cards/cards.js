@@ -71,6 +71,7 @@ addCardType("More Upgrades", null, "Selected tower will be able to obtain one ad
 function addUpgrade(name, img, desc, execute, countInDeck) {
     function wrappedExecute(gun) {
         gun.upgrades++;
+        playSound("powerup");
         execute(gun);
     }
     addCardType(name, img, desc, INTERACT.SELECT_GUN, wrappedExecute, countInDeck, function(tile) {
