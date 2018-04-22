@@ -100,8 +100,15 @@ Game.prototype.updateLogic = function() {
         var done = this.bullets[b].update(dt, this.tAbs);
         if (done) {
             this.renderSorter.remove(this.bullets[b]);
+            var e = this.bullets[b].hitEnemy;
             if (this.bullets[b].h <= 0) {
                 renderCanvasSplash(this.groundContext, this.bullets[b].gun.tp.splash, this.bullets[b].x, this.bullets[b].y, 0.25);
+            }
+            if (e) {
+                // Enemy was hit
+                if (e.alive == null && this.bullets[b].gun.lifeGenerator) {
+                    this.lives++;
+                }
             }
             this.bullets.splice(b, 1);
         }

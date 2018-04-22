@@ -10,6 +10,7 @@ function Bullet(gun, vx, vy, vh) {
     this.vx = vx;
     this.vy = vy;
     this.vh = vh;
+    this.hitEnemy = null;
 }
 
 Bullet.prototype.update = function(dt, t) {
@@ -25,6 +26,7 @@ Bullet.prototype.update = function(dt, t) {
         var point = e.collidesWith(this.x, this.y, this.h, 10)
         if (point) {
             e.damage(this.gun.damage);
+            this.hitEnemy = e;
             // Blob dynamics
             this.splash(e, point);
             // Destroy this bullet
