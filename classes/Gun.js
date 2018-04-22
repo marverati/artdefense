@@ -112,16 +112,10 @@ Gun.prototype.update = function(dt, t) {
         }
         // Target
         if (this.target == null || !this.target.alive) {
-            // Find new target
-            var self = this;
-            var enemies = this.game.enemies.filter(function(e) {
-                return self.isInRange(e.x, e.y) && e.type != self.tp;
-            });
-            if (enemies.length < 1) {
-                this.target = null;
+            this.target = Gun.getTarget(this.x, this.y, this.range, this.tp);
+            if (this.target == null) {
                 return;
             }
-            this.target = enemies[0];
         }
         this.shootTo(this.target.x, this.target.y, t);
     }
@@ -136,13 +130,7 @@ Gun.prototype.update = function(dt, t) {
             this.nextShot = t + this.delay;
         }
         // Create bullet
-        var dx = x - this.tile.x;
-        var dy = y - this.tile.y;
-        var dis = Math.sqrt(dx * dx + dy * dy) + 40 * Math.random() * this.scattering;
-        var angle = Math.atan2(dx, dy) + 0.2 * (Math.random() - Math.random()) * this.scattering;
-        var vx = Math.sin(angle);
-        var vy = Math.cos(angle);
-        var vh = (0.18 + Math.min(1, dis / 2500)) / this.bulletSpeed + this.scattering * (Math.random() * 0.3 - Math.random() * 0.2);
+        var [vx, vy, vh] = this.getBulletVelocity(this.tile.x, this.tile.y, 10, x, y, 10);
         createBullet(vx, vy, vh);
         if (this.shootBack) {
             createBullet(-vx, -vy, vh);
@@ -164,6 +152,29 @@ Gun.prototype.update = function(dt, t) {
             self.game.renderSorter.add(bullet);
         }
     }
+
+    Gun.prototype.getBulletVelocity = function(sx, sy, sh, tx, ty, th) {
+        var dx = tx - sx;
+        var dy = ty - sy;
+        var dis = Math.sqrt(dx * dx + dy * dy) + 40 * Math.random() * this.scattering;
+        var angle = Math.atan2(dx, dy) + 0.2 * (Math.random() - Math.random()) * this.scattering;
+        var vx = Math.sin(angle);
+        var vy = Math.cos(angle);
+        var vh = (0.18 + Math.min(1, dis / 2500)) / this.bulletSpeed + this.scattering * (Math.random() * 0.3 - Math.random() * 0.2);
+        return [vx, vy, vh];
+    }
+
+Gun.getTarget = function(x, y, range, excludeType, excludeEnemy) {
+    range *= range;
+    var enemies = game.enemies.filter(function(e) {
+        var dx = e.x - x, dy = e.y - y;
+        return e.type != excludeType && dx * dx + dy * dy <= range && e != excludeEnemy;
+    });
+    if (enemies.length < 1) {
+        return null;
+    }
+    return enemies[0];
+};
 
 Gun.prototype.isInRange = function(x, y) {
     var dx = x - this.tile.x, dy = y - this.tile.y;

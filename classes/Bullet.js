@@ -11,6 +11,7 @@ function Bullet(gun, vx, vy, vh) {
     this.vy = vy;
     this.vh = vh;
     this.hitEnemy = null;
+    this.bounced = 0;
 }
 
 Bullet.prototype.update = function(dt, t) {
@@ -39,6 +40,18 @@ Bullet.prototype.update = function(dt, t) {
             }
             // Blob dynamics
             this.splash(e, point);
+            // Jump to another target?
+            if (this.gun.bulletJump && this.bounced < 1) {
+                var trg = Gun.getTarget(this.x, this.y, this.gun.range, this.gun.tp, e);
+                if (trg) {
+                    var [vx, vy, vh] = this.gun.getBulletVelocity(this.x, this.y, this.h, trg.x, trg.y, 10);
+                    this.vx = vx;
+                    this.vy = vy;
+                    this.vh = vh;
+                    this.bounded++;
+                    return;
+                }
+            }
             // Destroy this bullet
             return true;
         }

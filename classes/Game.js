@@ -81,6 +81,9 @@ Game.prototype.loadLevel = function(level) {
         this.deck.drawSpecificCards(function(tp) {
             return tp.name.indexOf(" Tower") >= 0 && tp.name.indexOf("Mystery") < 0;
         }, 3);
+        this.deck.drawSpecificCards(function(tp) {
+            return tp.name.indexOf("Jump") >= 0;
+        });
         this.deck.shuffleStack();
         this.deck.drawCards(5 - this.deck.drawn.length);
     };

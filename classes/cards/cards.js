@@ -23,9 +23,10 @@ addCardType("Draw Cards", null, "Draw 3 new cards from the deck.", INTERACT.NONE
     game.deck.drawCards(3);
 }, 5);
 // Special Rainbow Tower?
+/*
 addCardType("Mystery Tower", null, "Create a fancy colorful tower shooting all the colors.", INTERACT.SELECT_FREE_TILE, function(tile) {
     game.guns.push(new Gun(game, tile, GUN_RED));
-}, 1);
+}, 1);*/
 // Improving Tower Attributes
 addUpgrade("Higher Frequency", null, "Pick a tower to shoot with 33% higher frequency than before.", function(gun) {
     gun.delay = 0.75 * gun.delay;
