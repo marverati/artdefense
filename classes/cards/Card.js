@@ -24,13 +24,39 @@ function Card(tp) {
 }
 
 Card.prototype.select = function() {
-    // Begin interaction
-    // TODO
+    var self = this;
+    if (this.interactionType == INTERACT.NONE) {
+        // Card with immediate effect
+        this.use();
+    } else {
+        // Begin interaction
+        game.startSelection(function(tile) {
+            // Filtering
+            var result = true;
+            if (this.interactionType == INTERACT.SELECT_GUN) {
+                result = tile.gun != null;
+            } else if (this.interactionType == INTERACT.SELECT_FREE_TILE) {
+                result = tile.tp == TILE_EMPTY;
+            }
+            if (result && self.filter) {
+                result = self.filter(tile);
+            }
+            return result;
+        }, function(tile) {
+            // Execution
+            self.use(tile);
+        }, function() {
+            // Cancelled
+        });
+    }
 };
 
-Card.prototype.use = function() {
+Card.prototype.use = function(target) {
     // Ultimate usage
-    this.executor();
+    if (this.interactionType == INTERACT.SELECT_GUN) {
+        target = tile.gun;
+    }
+    this.executor(target);
     this.inHand = false;
     this.used = true;
     this.deck.registerUse(this);

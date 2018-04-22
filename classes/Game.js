@@ -12,6 +12,13 @@ function Game(canvas) {
     this.paused = false;
 
     shadowImage = loader.loadImage("img/shadow.png");
+
+    this.selecting = false;
+    this.selectionFilter = null;
+    this.selectionCallback = null;
+    this.selectionCancelCallback = null;
+
+    this.initializeDeck();
     
     this.lives = 10;
 
@@ -47,9 +54,30 @@ Game.prototype.loadLevel = function(level) {
     var self = this;
     this.guns.forEach(function(gun) { self.renderSorter.add(gun); });
 
+    this.prepareDeck();
+
     this.camera.setPos( this.level.w / 2 * TILE_SIZE, this.level.h / 2 * TILE_SIZE);
     this.render();
 };
+
+    Game.prototype.initializeDeck = function() {
+        this.deck = new Deck();
+        var self = this;
+        cardTypes.forEach(function(tp) {
+            var card = new Card(tp);
+            self.deck.addCard(card);
+        });
+    };
+
+    Game.prototype.prepareDeck = function() {
+        this.deck.resetStack();
+        this.deck.shuffleStack();
+        this.deck.drawSpecificCards(function(tp) {
+            return tp.name.indexOf(" Tower") >= 0 && tp.name.indexOf("Mystery") < 0;
+        }, 3);
+        this.deck.shuffleStack();
+        this.deck.drawCards(7 - this.deck.drawn.length);
+    };
 
 Game.prototype.update = function() {
     if (this.level) {
@@ -146,22 +174,16 @@ Game.prototype.render = function() {
     this.ctx.drawImage(this.levelCanvas, 0, 0);
 
     // Hover Effect
-    // TODO
+    if (this.selecting) {
+        if (this.mouseTile != null) {
+            this.renderHover(this.mouseTileX, this.mouseTileY, this.selectionPossible);
+        }
+    }
 
     this.ctx.restore();
 
     // Canvases, Guns and Bullets
     this.renderSorter.render(this.ctx, this.camera);
-    /*
-    for (var e of this.enemies) {
-        e.render(this.ctx, this.camera);
-    }
-    for (var g of this.guns) {
-        g.render(this.ctx, this.camera);
-    }
-    for (var b of this.bullets) {
-        b.render(this.ctx, this.camera);
-    }*/
 };
 
     Game.prototype.renderHover = function(tx, ty, colorOrValid) {
@@ -175,6 +197,8 @@ Game.prototype.render = function() {
 
 Game.prototype.initializeControls = function() {
     document.body.addEventListener("keydown", this.handleKey.bind(this));
+    this.canvas.addEventListener("mousemove", this.handleMouseMove.bind(this));
+    this.canvas.addEventListener("click", this.handleMouseClick.bind(this));
 };
 
 Game.prototype.handleKey = function(e) {
@@ -202,3 +226,62 @@ function drawShadow(ctx, x, y, scale, fade) {
         ctx.restore();
     }
 }
+
+Game.prototype.startSelection = function(filter, callback, cancelCallback) {
+    if (this.selecting) {
+        this.cancelSelection();
+    }
+    this.selecting = true;
+    this.selectionFilter = filter || function(tile) { return tile != null; };
+    this.selectionCallback = callback || function(tile) {};
+    this.selectionCancelCallback = cancelCallback || function() {};
+};
+
+Game.prototype.cancelSelection = function() {
+    this.selecting = false;
+    this.selectionCancelCallback();
+    this.selectionFilter = null;
+    this.selectionCallback = null;
+    this.selectionCancelCallback = null;
+};
+
+Game.prototype.updateSelection = function() {
+    var tile = this.mouseTile;
+    if (tile != null) {
+        this.selectionTile = tile;
+        this.selectionPossible = this.selectionFilter(tile);
+    }
+};
+
+Game.prototype.handleMouseMove = function(e) {
+    var mx = this.mouseX = (e.clientX - this.canvas.offsetLeft) * this.canvas.width / this.canvas.offsetWidth;
+    var my = this.mouseY = (e.clientY - this.canvas.offsetTop) * this.canvas.height / this.canvas.offsetHeight;
+    [absmx, absmy] = this.camera.detransform(this.canvas, mx, my);
+    this.mouseTileX = Math.floor(absmx / TILE_SIZE);
+    this.mouseTileY = Math.floor(absmy / TILE_SIZE);
+    this.mouseTile = this.level.get(this.mouseTileX, this.mouseTileY);
+    if (this.mouseTile.tx != this.mouseTileX || this.mouseTile.ty != this.mouseTileY) {
+        this.mouseTile = null;
+    }
+    if (this.selecting) {
+        this.updateSelection();
+    }
+};
+
+Game.prototype.handleMouseClick = function(e) {
+    if (this.selecting) {
+        if (e.button == 0) {
+            // Left click
+            if (this.selectionPossible) {
+                this.selectionCallback(this.selectionTile);
+                this.selecting = false;
+                this.selectionFilter = null;
+                this.selectionCallback = null;
+                this.selectionCancelCallback = null;
+            }
+        } else {
+            // Right click
+            this.cancelSelection();
+        }
+    }
+};

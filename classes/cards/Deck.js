@@ -32,6 +32,28 @@ Deck.prototype.drawCard = function() {
         card.inStack = false;
         card.inHand = true;
     }
+    return card;
+};
+
+Deck.prototype.drawSpecificCards = function(filter, count) {
+    if (count == null) { count = 1; }
+    var result = [];
+    for (var i = this.stack.length - 1; i >= 0; i--) {
+        var tp = this.stack[i].type;
+        if (filter(tp)) {
+            var card = this.stack[i];
+            result.push(card);
+            card.inStack = false;
+            card.inHand = true;
+            this.drawn.push(card);
+            this.stack.splice(i, 1);
+            count--;
+            if (count <= 0) {
+                return result;
+            }
+        }
+    }
+    return result;
 };
 
 Deck.prototype.registerUse = function(card) {

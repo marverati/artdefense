@@ -41,3 +41,19 @@ Camera.prototype.transform = function(x, y, h) {
     // Add height
     return [cx, cy - h];
 };
+
+Camera.prototype.detransform = function(canvas, mx, my) {
+    // Screen center
+    mx -= canvas.width / 2;
+    my -= canvas.height / 2;
+    // Scale accordingly
+    mx /= 1.41421356;
+    my /= 1.41421356 * this.yScale;
+    // Convert screen to world coordinates
+    var wx = mx - my;
+    var wy = mx + my;
+    // Camera offset
+    wx += this.x;
+    wy += this.y;
+    return [wx, wy];
+};

@@ -81,7 +81,6 @@ function Level(game, w, h, trgx, trgy, spawns, waves) {
     // Waves
     this.currentWave = 0;
     this.waves = waves;
-    console.log(this.waves);
     this.waveStarted = true;
     for (var wave of this.waves) {
         wave.level = this;
