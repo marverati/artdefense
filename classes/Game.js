@@ -198,15 +198,28 @@ Game.prototype.render = function() {
     // Level Geometry
     this.ctx.drawImage(this.levelCanvas, 0, 0);
 
-    // Wave Progress
-    if (this.level.waveStarted && !this.won && !this.lost) {
-        var remaining = this.level.enemyCount - this.level.passedEnemies - this.enemies.length;
-        if (remaining > 0) {
-            this.ctx.fillStyle = "white";
-            this.ctx.font = "86px Calibri";
-            this.ctx.textAlign = "center";
-            this.ctx.fillText("" + remaining, this.level.spawns[0].startX * TILE_SIZE + 48, this.level.spawns[0].startY * TILE_SIZE + 80);
-            this.ctx.textAlign = "left";
+    // Spawn Decoration
+    if (!this.won && !this.lost) {
+        if (this.level.waveStarted) {
+            // Wave Progress
+            var remaining = this.level.enemyCount - this.level.passedEnemies - this.enemies.length;
+            if (remaining > 0) {
+                this.ctx.fillStyle = "white";
+                this.ctx.font = "86px Calibri";
+                this.ctx.textAlign = "center";
+                this.ctx.fillText("" + remaining, this.level.spawns[0].startX * TILE_SIZE + 48, this.level.spawns[0].startY * TILE_SIZE + 80);
+                this.ctx.textAlign = "left";
+            }
+        } else {
+            // Spawn Direction
+            var x = (this.level.spawns[0].startX + 0.5) * TILE_SIZE;
+            var y = (this.level.spawns[0].startY + 0.5) * TILE_SIZE + 10 * Math.sin(this.tAbs * 0.003);
+            this.ctx.save();
+            this.ctx.globalAlpha = 0.5;
+            this.ctx.translate(x, y);
+            this.ctx.scale(1, -1);
+            this.ctx.drawImage(Gun.upgradeSlotImage, -40, -40, 80, 80);
+            this.ctx.restore();
         }
     }
 
