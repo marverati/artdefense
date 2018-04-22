@@ -67,6 +67,7 @@ Game.prototype.loadLevel = function(level) {
             var card = new Card(tp);
             self.deck.addCard(card);
         });
+        this.deckRenderer = new DeckRenderer(this.deck, this.canvas);
     };
 
     Game.prototype.prepareDeck = function() {
@@ -184,6 +185,9 @@ Game.prototype.render = function() {
 
     // Canvases, Guns and Bullets
     this.renderSorter.render(this.ctx, this.camera);
+
+    // Cards
+    this.deckRenderer.render(this.ctx);
 };
 
     Game.prototype.renderHover = function(tx, ty, colorOrValid) {

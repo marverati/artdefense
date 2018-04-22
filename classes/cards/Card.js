@@ -9,7 +9,7 @@ const INTERACT = {
 function CardType(name, image, description, interactionType, executor, filter) {
     this.name = name;
     this.image = image;
-    this.description = description;
+    this.description = Card.wrapText(description);
     this.interactionType = interactionType;
     this.executor = executor;
     this.filter = filter;
@@ -21,6 +21,32 @@ function Card(tp) {
     this.inHand = false;
     this.used = false;
     this.deck = null;
+}
+
+Card.font = "24px Arial";
+
+Card.wrapText = function(text) {
+    var ctx = (document.createElement("canvas").getContext("2d"));
+    ctx.font = Card.font;
+    var words = text.split(' ');
+    var line = "";
+    var maxWidth = 240;
+    var result = [];
+
+    for (var i = 0; i < words.length; i++) {
+        var s = line + words[i] + ' ';
+        var size = ctx.measureText(s);
+        if (size.width > maxWidth && i > 0) {
+            result.push(line);
+            line = words[i] + " ";
+        } else {
+            line = s;
+        }
+    }
+    if (line.length > 0) {
+        result.push(line);
+    }
+    return result;
 }
 
 Card.prototype.select = function() {
@@ -71,9 +97,9 @@ CardType.createBaseImage = function() {
     var h = cnv.height = 450;
     var ctx = cnv.getContext("2d");
     
+    roundRect(32, 16);
     ctx.fillStyle = "#fdf4f0";
     ctx.fill();
-    roundRect(32, 16);
     ctx.lineWidth = 16;
     ctx.strokeStyle = "#60241c";
     ctx.stroke();
