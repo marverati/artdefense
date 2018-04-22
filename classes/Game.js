@@ -207,15 +207,16 @@ Game.prototype.render = function() {
 
     // Spawn Decoration
     if (!this.won && !this.lost) {
+        this.ctx.fillStyle = "white";
+        this.ctx.font = "86px Calibri";
+        this.ctx.textAlign = "center";
+        var spx = this.level.spawns[0].startX * TILE_SIZE + 48;
+        var spy = this.level.spawns[0].startY * TILE_SIZE + 80;
         if (this.level.waveStarted) {
             // Wave Progress
             var remaining = this.level.enemyCount - this.level.passedEnemies - this.enemies.length;
             if (remaining > 0) {
-                this.ctx.fillStyle = "white";
-                this.ctx.font = "86px Calibri";
-                this.ctx.textAlign = "center";
-                this.ctx.fillText("" + remaining, this.level.spawns[0].startX * TILE_SIZE + 48, this.level.spawns[0].startY * TILE_SIZE + 80);
-                this.ctx.textAlign = "left";
+                this.ctx.fillText("" + remaining, spx, spy);
             }
         } else {
             // Spawn Direction
@@ -228,7 +229,12 @@ Game.prototype.render = function() {
             this.ctx.drawImage(Gun.upgradeSlotImage, -40, -40, 80, 80);
             this.ctx.restore();
         }
+
+        // Quote
+        this.ctx.textAlign = "left";
+        drawQuote(this.ctx, this.level.waveStarted ? this.level.currentWave : this.level.currentWave - 1, spx + 75, spy);
     }
+
 
     // Hover Effect
     if (this.selecting) {
