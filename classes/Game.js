@@ -64,8 +64,11 @@ Game.prototype.loadLevel = function(level) {
         this.deck = new Deck();
         var self = this;
         cardTypes.forEach(function(tp) {
-            var card = new Card(tp);
-            self.deck.addCard(card);
+            var count = tp.count;
+            for (var i = 0; i < count; i++) {
+                var card = new Card(tp);
+                self.deck.addCard(card);
+            }
         });
         this.deckRenderer = new DeckRenderer(this.deck, this.canvas);
     };
@@ -187,7 +190,16 @@ Game.prototype.render = function() {
     this.renderSorter.render(this.ctx, this.camera);
 
     // Cards
+    if (this.selecting) {
+        this.ctx.globalAlpha = 0.25;
+    }
     this.deckRenderer.render(this.ctx);
+    this.ctx.globalAlpha = 1;
+
+    // Lives
+    this.ctx.fillStyle = "black";
+    this.ctx.font = "42px Calibri";
+    this.ctx.fillText("Lives: " + this.lives, -this.canvas.width / 2 + 20, -this.canvas.height / 2 + 50);
 };
 
     Game.prototype.renderHover = function(tx, ty, colorOrValid) {
@@ -260,6 +272,10 @@ Game.prototype.updateSelection = function() {
 Game.prototype.handleMouseMove = function(e) {
     var mx = this.mouseX = (e.clientX - this.canvas.offsetLeft) * this.canvas.width / this.canvas.offsetWidth;
     var my = this.mouseY = (e.clientY - this.canvas.offsetTop) * this.canvas.height / this.canvas.offsetHeight;
+    if (this.deckRenderer.handleMouseMove(mx - this.canvas.width / 2, my - this.canvas.height / 2)) {
+        this.mouseTileX = this.mouseTileY = 0;
+        this.mouseTile = null;
+    }
     [absmx, absmy] = this.camera.detransform(this.canvas, mx, my);
     this.mouseTileX = Math.floor(absmx / TILE_SIZE);
     this.mouseTileY = Math.floor(absmy / TILE_SIZE);
@@ -273,6 +289,9 @@ Game.prototype.handleMouseMove = function(e) {
 };
 
 Game.prototype.handleMouseClick = function(e) {
+    if (this.deckRenderer.handleMouseClick(this.mouseX - this.canvas.width / 2, this.mouseY - this.canvas.height / 2)) {
+        return;
+    }
     if (this.selecting) {
         if (e.button == 0) {
             // Left click
@@ -288,4 +307,9 @@ Game.prototype.handleMouseClick = function(e) {
             this.cancelSelection();
         }
     }
+};
+
+Game.prototype.addGun = function(gun) {
+    this.guns.push(gun);
+    this.renderSorter.add(gun);
 };

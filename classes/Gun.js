@@ -1,6 +1,8 @@
 
 Gun.blobImage = loader.loadImage("img/blob.png");
 Gun.splashImage = loader.loadImage("img/splash.png");
+Gun.upgradeImage = loader.loadImage("img/upgrade.png");
+Gun.upgradeSlotImage = loader.loadImage("img/upgradeSlot.png");
 
 var GUN_YELLOW = new GunType("Yellow", "#ffd820", 3, 250, 350, 1, 0.3, 0.5);
 var GUN_GREEN = new GunType("Green", "#30c010", 5, 800, 300, 0.5, 0.8, 0.5);
@@ -82,6 +84,14 @@ Gun.prototype.render = function(ctx, camera) {
     ctx.scale(0.5, 0.5);
     ctx.drawImage(this.tp.image, -this.tp.image.width / 2, -this.tp.image.height / 2);
     ctx.restore();
+    // Upgrades
+    if (this.upgrades > 0 || this.upgradeSlots > 1) {
+        var w = 20;
+        var h = w * 0.75;
+        for (var i = 0; i < this.upgradeSlots; i++) {
+            ctx.drawImage( (i < this.upgrades) ? Gun.upgradeImage : Gun.upgradeSlotImage, x - w/2, y + 16 - 0.5 * w * i, w, h);
+        }
+    }
 };
 
 Gun.prototype.update = function(dt, t) {

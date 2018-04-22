@@ -6,13 +6,14 @@ const INTERACT = {
     SELECT_FREE_TILE: 3,
 }
 
-function CardType(name, image, description, interactionType, executor, filter) {
+function CardType(name, image, description, interactionType, executor, filter, count) {
     this.name = name;
     this.image = image;
     this.description = Card.wrapText(description);
     this.interactionType = interactionType;
     this.executor = executor;
     this.filter = filter;
+    this.count = count;
 }
 
 function Card(tp) {
@@ -23,7 +24,7 @@ function Card(tp) {
     this.deck = null;
 }
 
-Card.font = "24px Arial";
+Card.font = "24px Calibri";
 
 Card.wrapText = function(text) {
     var ctx = (document.createElement("canvas").getContext("2d"));
@@ -51,7 +52,7 @@ Card.wrapText = function(text) {
 
 Card.prototype.select = function() {
     var self = this;
-    if (this.interactionType == INTERACT.NONE) {
+    if (this.type.interactionType == INTERACT.NONE) {
         // Card with immediate effect
         this.use();
     } else {
@@ -59,13 +60,13 @@ Card.prototype.select = function() {
         game.startSelection(function(tile) {
             // Filtering
             var result = true;
-            if (this.interactionType == INTERACT.SELECT_GUN) {
+            if (self.type.interactionType == INTERACT.SELECT_GUN) {
                 result = tile.gun != null;
-            } else if (this.interactionType == INTERACT.SELECT_FREE_TILE) {
+            } else if (self.type.interactionType == INTERACT.SELECT_FREE_TILE) {
                 result = tile.tp == TILE_EMPTY;
             }
-            if (result && self.filter) {
-                result = self.filter(tile);
+            if (result && self.type.filter) {
+                result = self.type.filter(tile);
             }
             return result;
         }, function(tile) {
@@ -79,10 +80,10 @@ Card.prototype.select = function() {
 
 Card.prototype.use = function(target) {
     // Ultimate usage
-    if (this.interactionType == INTERACT.SELECT_GUN) {
-        target = tile.gun;
+    if (this.type.interactionType == INTERACT.SELECT_GUN) {
+        target = target.gun;
     }
-    this.executor(target);
+    this.type.executor(target);
     this.inHand = false;
     this.used = true;
     this.deck.registerUse(this);

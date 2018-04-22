@@ -41,8 +41,39 @@ function generateSplash() {
       context.lineTo(x, y);
     }
   }
-  var c = 255 - 150 * Math.random() * Math.random();
+  var c = 140 - 60 * Math.random() * Math.random();
   var a = 1 - 0.8 * Math.random();
   context.fillStyle = "rgba(" + c + "," + c + "," + c + ", " +  a + ")";
   context.fill();
 }
+
+
+Upgrade:
+
+setSize(320, 240);
+context.setTransform(1, 0, 0, 1, 0, 0);
+context.clearRect(0,0,9999,9999);
+context.translate(canvas.width / 2, canvas.height / 2 + 20);
+
+var x = 150;
+var y = 60;
+var h = 120;
+
+context.beginPath();
+context.moveTo(-x,y);
+context.lineTo(-x,y-h);
+context.lineTo(0,-h);
+context.lineTo(x,y-h);
+context.lineTo(x,y);
+context.lineTo(0,0);
+context.closePath();
+
+context.fillStyle = "#383838";
+//context.fillStyle = "#f0d030";
+context.fill();
+context.lineWidth = 12;
+context.strokeStyle = "black";
+context.stroke();
+
+scaleSize(0.5);
+scaleSize(0.5);

@@ -8,7 +8,6 @@ window.onload = function() {
 
 loader = new Loader(loadingDiv, function() {
     loadingDiv.display = "none";
-    console.log("done");
     game = new Game(document.getElementById("gameCanvas"));
     game.loadLevel(levels[0]);
 });

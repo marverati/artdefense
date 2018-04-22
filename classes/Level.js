@@ -52,7 +52,6 @@ function Level(game, w, h, trgx, trgy, spawns, waves) {
     this.spawns = spawns instanceof Array ? spawns : [ spawns ];
     // Apply Spawn and Path tiles
     for (var spawn of this.spawns) {
-        console.log(spawn);
         var prevTile = this.tiles[spawn.startY][spawn.startX];
         prevTile.tp = TILE_SPAWN;
         // connect path nodes; for each segment:

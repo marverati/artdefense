@@ -66,7 +66,7 @@ Deck.prototype.registerUse = function(card) {
 
 Deck.prototype.drawCards = function(count) {
     for (var i = 0; i < count; i++) {
-        this.drawCard();
+        setTimeout(this.drawCard.bind(this), 400 * i);
     }
 };
 

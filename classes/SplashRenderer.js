@@ -42,7 +42,6 @@ function renderBlob(ctx, sx, sy, sz, ax, ay) {
             // Project this node's angle on surface, from start position
             var tx = sx - sz * Math.tan(nay);
             var ty = sy - sz * Math.tan(nax);
-            console.log(nax.toFixed(2), nay.toFixed(2), "->", (tx - sx).toFixed(2), (ty - sy).toFixed(2));
             if (n == 0) {
                 ctx.beginPath();
                 ctx.moveTo(tx, ty);
