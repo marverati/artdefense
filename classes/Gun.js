@@ -5,9 +5,9 @@ Gun.upgradeImage = loader.loadImage("img/upgrade.png");
 Gun.upgradeSlotImage = loader.loadImage("img/upgradeSlot.png");
 
 var GUN_YELLOW = new GunType("Yellow", "#ffd820", 3, 250, 350, 1, 0.3, 0.5);
-var GUN_GREEN = new GunType("Green", "#30c010", 5, 800, 300, 0.5, 0.8, 0.5);
+var GUN_GREEN = new GunType("Green", "#30c010", 5, 800, 300, 0.62, 0.8, 0.5);
 var GUN_BLUE = new GunType("Blue", "blue", 6, 1200, 520, 0.75, 1, 1);
-var GUN_RED = new GunType("Red", "red", 12, 1000, 420, 0.7, 0.75, 1);
+var GUN_RED = new GunType("Red", "red", 12, 1000, 420, 0.85, 0.75, 1);
 
 var TYPE_BLANC = new GunType("Blanc", "#eee");
 
@@ -66,7 +66,7 @@ function Gun(game, tile, type) {
     this.range = type.range;
     this.range2 = this.range * this.range;
     this.rotation = 0;
-    this.bulletJump = false;
+    this.bulletJump = 0;
     this.sprinkler = false;
     this.shootBack = false;
     this.shootSides = false;
@@ -130,7 +130,7 @@ Gun.prototype.update = function(dt, t) {
             this.nextShot = t + this.delay;
         }
         // Create bullet
-        var [vx, vy, vh] = this.getBulletVelocity(this.tile.x, this.tile.y, 10, x, y, 10);
+        var [vx, vy, vh] = this.getBulletVelocity(this.tile.x, this.tile.y, 10, x, y, 30 + 80 * Math.random());
         createBullet(vx, vy, vh);
         if (this.shootBack) {
             createBullet(-vx, -vy, vh);
@@ -160,7 +160,9 @@ Gun.prototype.update = function(dt, t) {
         var angle = Math.atan2(dx, dy) + 0.2 * (Math.random() - Math.random()) * this.scattering;
         var vx = Math.sin(angle);
         var vy = Math.cos(angle);
-        var vh = (0.18 + Math.min(1, dis / 2500)) / this.bulletSpeed + this.scattering * (Math.random() * 0.3 - Math.random() * 0.2);
+        var steps = dis / this.bulletSpeed;
+        var fallOff = 0.5 * BULLET_GRAVITY * steps * steps;
+        var vh = (fallOff + th - sh) / steps + this.scattering * (Math.random() * 0.3 - Math.random() * 0.2);
         return [vx, vy, vh];
     }
 

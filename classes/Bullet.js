@@ -12,6 +12,7 @@ function Bullet(gun, vx, vy, vh) {
     this.vh = vh;
     this.hitEnemy = null;
     this.bounced = 0;
+    this.ignoreEnemy = null;
 }
 
 Bullet.prototype.update = function(dt, t) {
@@ -24,6 +25,7 @@ Bullet.prototype.update = function(dt, t) {
     // Collision
     var enemies = this.gun.game.enemies;
     for (var e of enemies) {
+        if (this.ignoreEnemy == e) { continue; }
         var point = e.collidesWith(this.x, this.y, this.h, 10)
         if (point) {
             e.damage(this.gun.damage);
@@ -41,14 +43,15 @@ Bullet.prototype.update = function(dt, t) {
             // Blob dynamics
             this.splash(e, point);
             // Jump to another target?
-            if (this.gun.bulletJump && this.bounced < 1) {
+            if (this.gun.bulletJump && this.bounced < this.gun.bulletJump) {
                 var trg = Gun.getTarget(this.x, this.y, this.gun.range, this.gun.tp, e);
                 if (trg) {
                     var [vx, vy, vh] = this.gun.getBulletVelocity(this.x, this.y, this.h, trg.x, trg.y, 10);
                     this.vx = vx;
                     this.vy = vy;
                     this.vh = vh;
-                    this.bounded++;
+                    this.bounced++;
+                    this.ignoreEnemy = e;
                     return;
                 }
             }

@@ -42,7 +42,7 @@ addUpgrade("Precision", null, "Pick a tower to practically eliminate scattering 
     gun.scattering = 0.1 * gun.scattering;
 }, 3);
 addUpgrade("Jumping Bullets", null, "Pick a tower to let its bullets jump once to another enemy after hitting one.", function(gun) {
-    gun.bulletJump = true;
+    gun.bulletJump++;
 }, 3);
 addUpgrade("Sprinkler", null, "Pick a tower to turn it into a sprinkler. Much increased frequency, but no targeting.", function(gun) {
     gun.delay = 0.2 * gun.delay;
