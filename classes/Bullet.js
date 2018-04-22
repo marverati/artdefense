@@ -30,16 +30,16 @@ Bullet.prototype.update = function(dt, t) {
         if (point) {
             if (e.type != this.gun.tp) {
                 e.damage(this.gun.damage);
-            }
-            this.hitEnemy = e;
-            // Enemy state
-            if (this.gun.tp == GUN_GREEN) {
-                e.poisoned = Math.max(e.poisoned, 400);
-            } else if (this.gun.tp == GUN_BLUE) {
-                e.frozen = Math.max(e.frozen, 150);
-            } else if (this.gun.confusion) {
-                if (Math.random() < 0.1) {
-                    e.confused = Math.max(e.confused, 30 + Math.random() * 50);
+                this.hitEnemy = e;
+                // Enemy state
+                if (this.gun.tp == GUN_GREEN) {
+                    e.poisoned = Math.max(e.poisoned, 400);
+                } else if (this.gun.tp == GUN_BLUE) {
+                    e.frozen = Math.max(e.frozen, 150);
+                } else if (this.gun.confusion) {
+                    if (Math.random() < 0.1) {
+                        e.confused = Math.max(e.confused, 30 + Math.random() * 50);
+                    }
                 }
             }
             // Blob dynamics
